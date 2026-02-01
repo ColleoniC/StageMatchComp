@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Errore - Questionari PCTO </title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1> Errore </h1>
+        </div>
+        
+        <div class="student-info" style="border-left-color: #dc3545;">
+            <div class="info-row">
+                <span class="info-label"> Messaggio: </span>
+                <span class="info-value"> {{ messaggio }} </span>
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px; text-align: center; color: #666;">
+            <p> Il database non contiene questionari </p>
+        </div>
+    </div>
+</body>
+</html>

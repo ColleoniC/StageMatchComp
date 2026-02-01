@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Questionario PCTO </title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    {% set domande = {
+         1: "Sviluppare semplici soluzioni con software di office-automation (Excel, Word, Access)",
+        2: "Sviluppare semplici software in ambiente console e/o Windows, testing",
+        3: "Sviluppare semplici app per dispositivi mobile",
+        4: "Sviluppare semplici software di rete, applicazioni IoT",
+        5: "Sviluppare software applicativi per gestione dati (database), multimedialità",
+        6: "Sviluppare semplici software di realtà virtuale / aumentata",
+        7: "Gestire database, procedure SQL / NoSQL",
+        8: "Realizzare siti web statici e contenuti multimediali",
+        9: "Realizzare siti web dinamici (web-app, API REST)",
+        10: "Installare / manutenere hardware PC",
+        11: "Installare e configurare software applicativi, antivirus",
+        12: "Installare e configurare sistemi operativi client",
+        13: "Installare e configurare sistemi operativi server",
+        14: "Gestire ambienti Linux e script shell",
+        15: "Help-desk e supporto clienti software",
+        16: "Configurazione reti TCP/IP",
+        17: "Data-entry su software di magazzino / contabilità",
+        18: "Compiti di ufficio e segreteria"
+    } %}
+
+
+</head>
+<body>
+    <div class="container">
+        <h1> BILANCIO ABILITÀ TIROCINIO - autovalutazione STUDENTE </h1>
+        
+        <div class="student-header">
+            <strong> STUDENTE </strong> {{ questionario.Cognome }} {{ questionario.Nome }} 
+            {% if questionario.Luogo_Di_Residenza %} - {{ questionario.Luogo_Di_Residenza }}{% endif %} 
+            - {{ questionario.Indirizzo_email }}
+        </div>
+        
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th class="col-mansione"> AMBITO MANSIONE / ABILITÀ </th>
+                    <th class="col-interesse"> INTERESSE <br><span class="small"> 1..4 basso..alto </span></th>
+                    <th class="col-competenza"> COMPETENZA <br><span class="small"> 1..4 basso..alto </span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="section-header">
+                    <td colspan="3"><strong> 1. SVILUPPO SOFTWARE / SITI WEB</strong></td>
+                </tr>
+                {% for i in range(1, 10) %}
+                    <tr>
+                        <td class="mansione-desc">
+                            1.{{ i }} – {{ domande[i] }}
+                        </td>
+                        <td class="value-cell">
+                            {{ questionario['Interesse_' ~ i] or '-' }}
+                        </td>
+                        <td class="value-cell">
+                            {{ questionario['Competenza_' ~ i] or '-' }}
+                        </td>
+                    </tr>
+                {% endfor %}
+
+                <tr class="section-header">
+                    <td colspan="3"><strong> 2. SISTEMI E RETI / MANUTENZIONE HW-SW / HELP-DESK </strong></td>
+                </tr>
+
+                {% for i in range(10, 17) %}
+                    <tr>
+                        <td class="mansione-desc">
+                            2.{{ i - 9 }} – {{ domande[i] }}
+                        </td>
+                        <td class="value-cell">
+                             {{ questionario['Interesse_' ~ i] or '-' }}
+                         </td>
+                         <td class="value-cell">
+                             {{ questionario['Competenza_' ~ i] or '-' }}
+                        </td>
+                    </tr>
+                {% endfor %}
+
+                
+                <tr class="section-header">
+                    <td colspan="3"><strong>3. SUPPORTO / BACK-OFFICE / SEGRETERIA</strong></td>
+                </tr>
+                {% for i in range(17, 19) %}
+                    <tr>
+                        <td class="mansione-desc">
+                             3.{{ i - 16 }} – {{ domande[i] }}
+                        </td>
+                        <td class="value-cell">
+                             {{ questionario['Interesse_' ~ i] or '-' }}
+                        </td>
+                        <td class="value-cell">
+                             {{ questionario['Competenza_' ~ i] or '-' }}
+                        </td>
+                    </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
