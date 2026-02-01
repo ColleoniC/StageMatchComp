@@ -7,7 +7,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 app = Flask(__name__)
 
 obiettivo = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-credenziali = ServiceAccountCredentials.from_json_keyfile_name('cobalt-deck-484120-d7-2ca2bbde67e0.json', obiettivo)
+credenziali = ServiceAccountCredentials.from_json_keyfile_name('Credenziali.json', obiettivo)
 client = gspread.authorize(credenziali)
 
 engine = create_engine("sqlite:///database.db")
