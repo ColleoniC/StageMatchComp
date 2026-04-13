@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block titolo %}Stage Match — ITIS P. Paleocapa{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar__logo">
+    Stage Match
+    <span>ITIS P. Paleocapa</span>
+  </div>
+  <div class="navbar__menu">
+    <a href="{{ url_for('home') }}" class="navbar__link {% if request.endpoint == 'home' %}attivo{% endif %}">Home</a>
+    <a href="{{ url_for('lista_aziende') }}" class="navbar__link {% if request.endpoint == 'lista_aziende' %}attivo{% endif %}">Lista Aziende</a>
+    <a href="#" id="linkProfilo"
+       class="navbar__link {% if request.endpoint == 'profilo' %}attivo{% endif %} {% if not utente or tipo != 'studente' %}disabilitato{% endif %}"
+       {% if utente and tipo == 'studente' %}href="{{ url_for('profilo') }}"{% endif %}>Profilo</a>
+    {% if utente and tipo == 'admin' %}
+    <a href="{{ url_for('admin_panel') }}" class="navbar__link {% if request.endpoint == 'admin_panel' %}attivo{% endif %}">Admin</a>
+    {% endif %}
+    <a href="{{ url_for('mappa') }}" class="navbar__link {% if request.endpoint == 'mappa' %}attivo{% endif %}">Mappa</a>
+  </div>
+  <div class="navbar__azioni" id="navbarAzione">
+    {% if utente %}
+      <!-- Click sul profilo mini porta al profilo se studente, altrimenti nulla -->
+      {% if tipo == 'studente' %}
+      <a href="{{ url_for('profilo') }}" class="profilo-mini profilo-mini--link">
+      {% else %}
+      <div class="profilo-mini">
+      {% endif %}
+        <div class="profilo-mini__avatar">{{ (utente.name or utente.email or '?')[0]|upper }}</div>
+        <span class="profilo-mini__nome">{{ (utente.name or utente.email or '').split(' ')[0] }}</span>
+      {% if tipo == 'studente' %}
+      </a>
+      {% else %}
+      </div>
+      {% endif %}
+      <a href="{{ url_for('logout') }}"><button class="btn-logout">Esci</button></a>
+    {% else %}
+      <button class="btn-login" onclick="apriModalLogin()">Login</button>
+    {% endif %}
+  </div>
+</nav>
+
+{% block contenuto %}{% endblock %}
+
+{% if not utente %}
+<div class="modal-overlay" id="modalLogin" onclick="gestisciClickOverlay(event)">
+  <div class="modal">
+    <div class="modal__lato">
+      <p class="modal__lato-titolo">Stage Match<br>Paleocapa</p>
+      <p class="modal__lato-sub">Accedi per gestire il tuo profilo PCTO</p>
+    </div>
+    <div class="modal__corpo">
+      <button class="modal__chiudi" onclick="chiudiModalLogin()" aria-label="Chiudi">✕</button>
+
+      <!-- Step 1: scelta tipo -->
+      <div id="stepScelta">
+        <p class="modal__titolo">Accedi al <span>portale</span></p>
+        <div class="scelta-login">
+          <button class="btn-tipo-login" onclick="mostraSceltaStudente()">
+            <span class="btn-tipo-login__icona">🎓</span>
+            <span class="btn-tipo-login__testo">Studente</span>
+            <span class="btn-tipo-login__sub">Account scolastico</span>
+          </button>
+          <div class="btn-tipo-login disabilitato-login" title="Accesso aziende non ancora disponibile">
+            <span class="btn-tipo-login__icona">🏢</span>
+            <span class="btn-tipo-login__testo">Azienda</span>
+            <span class="btn-tipo-login__sub">Non disponibile</span>
+          </div>
+          <button class="btn-tipo-login btn-tipo-login--admin" onclick="mostraLoginAdmin()">
+            <span class="btn-tipo-login__icona">🔑</span>
+            <span class="btn-tipo-login__testo">Admin</span>
+            <span class="btn-tipo-login__sub">Accesso riservato</span>
+          </button>
+        </div>
+        <p class="modal__nota">Seleziona il tipo di account per continuare.</p>
+      </div>
+
+      <!-- Step 2: lista studenti -->
+      <div id="stepStudente" style="display:none;">
+        <button class="modal__indietro" onclick="tornaScelta()">← Indietro</button>
+        <p class="modal__titolo" style="margin-top:.75rem;">Chi sei?</p>
+        <p class="modal__nota" style="margin-bottom:1rem;text-align:left;font-size:.78rem;">Seleziona il tuo nome dalla lista degli studenti registrati.</p>
+        <div id="listaStudenti" class="lista-studenti-login">
+          <div class="lista-studenti-login__loading">Caricamento…</div>
+        </div>
+        <p class="modal__nota" style="margin-top:.75rem;">Solo gli studenti che hanno compilato il questionario PCTO sono visibili.</p>
+      </div>
+
+      <!-- Step 3: login admin -->
+      <div id="stepAdmin" style="display:none;">
+        <button class="modal__indietro" onclick="tornaScelta()">← Indietro</button>
+        <p class="modal__titolo" style="margin-top:.75rem;">Accesso <span>Admin</span></p>
+        <div class="admin-form">
+          <div class="admin-form__campo">
+            <label class="admin-form__label">Nome utente</label>
+            <input type="text" id="adminNome" class="admin-form__input" placeholder="admin" autocomplete="off">
+          </div>
+          <div class="admin-form__campo">
+            <label class="admin-form__label">Password</label>
+            <input type="password" id="adminPassword" class="admin-form__input" placeholder="••••">
+          </div>
+          <p id="adminErrore" class="admin-form__errore" style="display:none;">Credenziali non valide.</p>
+          <button class="admin-form__btn" onclick="loginAdmin()">Accedi</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<footer>
+  <div class="footer__inner">
+    <span>© 2026 ITIS Pietro Paleocapa — Bergamo</span>
+    <span class="footer__sep">|</span>
+    <a href="#">Privacy Policy</a>
+    <span class="footer__sep">|</span>
+    <a href="#">Contatti</a>
+    <span class="footer__didattico">Sito a scopo didattico</span>
+  </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% block script %}{% endblock %}
+</body>
+</html>

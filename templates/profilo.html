@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% block titolo %}Profilo Studente — Stage Match{% endblock %}
+
+{% block contenuto %}
+<main class="main profilo-main">
+
+  {% if questionario %}
+
+  <!-- HEADER PROFILO -->
+  <div class="profilo-header">
+    <div class="profilo-header__avatar">{{ (utente.name or utente.email or '?')[0]|upper }}</div>
+    <div class="profilo-header__info">
+      <p class="profilo-header__nome">{{ questionario.Cognome }} {{ questionario.Nome }}</p>
+      <p class="profilo-header__email">{{ questionario.Indirizzo_email }}</p>
+      {% if questionario.Luogo_Di_Residenza %}
+      <p class="profilo-header__luogo">📍 {{ questionario.Luogo_Di_Residenza }}</p>
+      {% endif %}
+    </div>
+    <div class="profilo-header__badge">Studente PCTO</div>
+  </div>
+
+  <!-- LAYOUT DUE COLONNE -->
+  <div class="profilo-layout">
+
+    <!-- COLONNA SX: dati anagrafici -->
+    <div class="profilo-col profilo-col--anagrafica">
+      <p class="profilo-sezione-titolo">Dati anagrafici</p>
+      <div class="profilo-anagrafica">
+        <div class="profilo-anagrafica__riga">
+          <span class="profilo-anagrafica__label">Nome</span>
+          <span class="profilo-anagrafica__val">{{ questionario.Nome or '—' }}</span>
+        </div>
+        <div class="profilo-anagrafica__riga">
+          <span class="profilo-anagrafica__label">Cognome</span>
+          <span class="profilo-anagrafica__val">{{ questionario.Cognome or '—' }}</span>
+        </div>
+        <div class="profilo-anagrafica__riga">
+          <span class="profilo-anagrafica__label">Email</span>
+          <span class="profilo-anagrafica__val" style="word-break:break-all;">{{ questionario.Indirizzo_email or '—' }}</span>
+        </div>
+        <div class="profilo-anagrafica__riga">
+          <span class="profilo-anagrafica__label">Residenza</span>
+          <span class="profilo-anagrafica__val">{{ questionario.Luogo_Di_Residenza or '—' }}</span>
+        </div>
+      </div>
+
+      <div class="profilo-legenda">
+        <p class="profilo-sezione-titolo" style="margin-top:1.5rem;">Legenda valutazioni</p>
+        <div class="profilo-legenda__griglia">
+          {% for v, label in [('1','Molto basso'),('2','Basso'),('3','Medio'),('4','Alto'),('5','Molto alto')] %}
+          <div class="profilo-legenda__item">
+            <span class="profilo-dot profilo-dot--{{ v }}">{{ v }}</span>
+            <span>{{ label }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- COLONNA DX: domande con valutazioni -->
+    <div class="profilo-col profilo-col--questionario">
+      <p class="profilo-sezione-titolo">Questionario PCTO</p>
+      <p class="profilo-sezione-sub">Interesse e competenza dichiarati per ciascuna attività</p>
+
+      {% set domande = {
+         1:  "Sviluppare soluzioni con software di office-automation (Excel, Word, Access)",
+         2:  "Sviluppare software in ambiente console e/o Windows, testing",
+         3:  "Sviluppare app per dispositivi mobile",
+         4:  "Sviluppare software di rete e applicazioni IoT",
+         5:  "Sviluppare software per gestione dati (database) e multimedialità",
+         6:  "Sviluppare software di realtà virtuale / aumentata",
+         7:  "Gestire database, procedure SQL / NoSQL",
+         8:  "Realizzare siti web statici e contenuti multimediali",
+         9:  "Realizzare siti web dinamici (web-app, API REST)",
+        10:  "Realizzare documentazione tecnica e organizzazione del progetto",
+        11:  "Installare e manutenere hardware PC",
+        12:  "Installare e configurare software applicativi e antivirus",
+        13:  "Installare e configurare sistemi operativi client",
+        14:  "Installare e configurare sistemi operativi server",
+        15:  "Gestire ambienti Linux e script shell",
+        16:  "Help-desk e supporto clienti software",
+        17:  "Configurazione reti TCP/IP",
+        18:  "Data-entry su software di magazzino / contabilità",
+        19:  "Compiti di ufficio e segreteria"
+      } %}
+
+      <div class="profilo-domande">
+        {% for i in range(1, 20) %}
+        {% set interesse  = questionario['Interesse_'  ~ i] %}
+        {% set competenza = questionario['Competenza_' ~ i] %}
+        <div class="profilo-domanda">
+          <div class="profilo-domanda__num">{{ i }}</div>
+          <div class="profilo-domanda__testo">{{ domande[i] }}</div>
+          <div class="profilo-domanda__vals">
+            <div class="profilo-val">
+              <span class="profilo-val__label">Interesse</span>
+              <span class="profilo-dot profilo-dot--{{ interesse or 0 }}">{{ interesse if interesse is not none else '—' }}</span>
+            </div>
+            <div class="profilo-val">
+              <span class="profilo-val__label">Competenza</span>
+              <span class="profilo-dot profilo-dot--{{ competenza or 0 }}">{{ competenza if competenza is not none else '—' }}</span>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+
+  {% else %}
+  <div class="profilo-header">
+    <div class="profilo-header__avatar">{{ (utente.email or '?')[0]|upper }}</div>
+    <div class="profilo-header__info">
+      <p class="profilo-header__nome">{{ utente.name or utente.email }}</p>
+      <p class="profilo-header__email">{{ utente.email }}</p>
+    </div>
+  </div>
+  <div class="profilo-vuoto">
+    <p class="profilo-vuoto__titolo">Questionario non trovato</p>
+    <p>Nessun dato PCTO associato a <strong>{{ utente.email }}</strong>.<br>
+    Verifica di aver compilato il modulo con la stessa email.</p>
+  </div>
+  {% endif %}
+
+</main>
+{% endblock %}

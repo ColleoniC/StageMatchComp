@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block titolo %}Pannello Admin — Stage Match{% endblock %}
+
+{% block contenuto %}
+<main class="main">
+  <div class="admin-header">
+    <div>
+      <p class="etichetta-sezione">Accesso riservato</p>
+      <h2 class="pagina-titolo">Pannello Amministratore</h2>
+      <p class="pagina-sub">Gestione del database questionari PCTO</p>
+    </div>
+    <div class="admin-stats">
+      <div class="admin-stat">
+        <span class="admin-stat__num">{{ studenti|length }}</span>
+        <span class="admin-stat__label">Studenti registrati</span>
+      </div>
+    </div>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for cat, msg in messages %}
+    <div class="admin-flash admin-flash--{{ cat }}">{{ msg }}</div>
+    {% endfor %}
+  {% endif %}
+  {% endwith %}
+
+  <div class="admin-tabella-wrap">
+    <div class="admin-tabella-header">
+      <p class="admin-tabella-titolo">Elenco studenti</p>
+      <input type="text" class="admin-cerca" id="cercaStudente" placeholder="Cerca per nome, cognome o email…" oninput="filtraAdmin()">
+    </div>
+
+    <div class="admin-tabella">
+      <div class="admin-tabella__head">
+        <span>#</span>
+        <span>Cognome e Nome</span>
+        <span>Email</span>
+        <span>Residenza</span>
+        <span>Risposte</span>
+        <span></span>
+      </div>
+
+      {% for s in studenti %}
+      <div class="admin-tabella__riga" data-search="{{ (s.Cognome ~ ' ' ~ s.Nome ~ ' ' ~ s.Indirizzo_email)|lower }}">
+        <span class="admin-tabella__id">{{ s.id }}</span>
+        <span class="admin-tabella__nome">{{ s.Cognome }} {{ s.Nome }}</span>
+        <span class="admin-tabella__email">{{ s.Indirizzo_email }}</span>
+        <span class="admin-tabella__luogo">{{ s.Luogo_Di_Residenza or '—' }}</span>
+        <span class="admin-tabella__risposte">
+          {% set compilate = namespace(n=0) %}
+          {% for i in range(1, 20) %}
+            {% if s['Interesse_' ~ i] is not none %}{% set compilate.n = compilate.n + 1 %}{% endif %}
+          {% endfor %}
+          {{ compilate.n }} / 19
+        </span>
+        <span class="admin-tabella__azioni">
+          <form method="POST" action="{{ url_for('admin_elimina', id=s.id) }}"
+                onsubmit="return confermaElimina('{{ s.Cognome }} {{ s.Nome }}')">
+            <button type="submit" class="admin-btn-elimina" title="Elimina record">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
+              </svg>
+              Elimina
+            </button>
+          </form>
+        </span>
+      </div>
+      {% else %}
+      <div class="admin-tabella__vuoto">Nessuno studente nel database.</div>
+      {% endfor %}
+    </div>
+  </div>
+</main>
+{% endblock %}
+
+{% block script %}
+<script>
+function filtraAdmin() {
+  const q = document.getElementById('cercaStudente').value.toLowerCase();
+  document.querySelectorAll('.admin-tabella__riga').forEach(r => {
+    r.style.display = r.dataset.search.includes(q) ? '' : 'none';
+  });
+}
+function confermaElimina(nome) {
+  return confirm(`Eliminare definitivamente il record di "${nome}"?\nQuesta operazione non può essere annullata.`);
+}
+</script>
+{% endblock %}

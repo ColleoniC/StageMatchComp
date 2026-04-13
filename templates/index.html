@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block contenuto %}
+<section class="hero">
+  <img id="heroImg" class="hero__img" src="" alt="ITIS Pietro Paleocapa">
+  <div class="hero__overlay"></div>
+  <div class="hero__testo">
+    <h1>Benvenuto su Stage Match<br>ITIS Pietro Paleocapa</h1>
+    <p>Il portale dedicato agli stage e al PCTO per studenti e aziende partner</p>
+  </div>
+</section>
+
+<main class="main">
+
+  <!-- DESCRIZIONE PROGETTO -->
+  <section class="progetto-desc">
+    <div class="progetto-desc__badge">Progetto PCTO 2026</div>
+    <h2 class="progetto-desc__titolo">Trova lo stage più adatto a te</h2>
+    <p class="progetto-desc__testo">
+      <strong>Stage Match</strong> è un'applicazione web sviluppata dagli studenti dell'ITIS Pietro Paleocapa
+      per semplificare l'abbinamento tra studenti e aziende nello stage FSL estivo.
+      Ogni studente compila un questionario su competenze e interessi: un algoritmo analizza i dati
+      e suggerisce le aziende più compatibili, tenendo conto anche della vicinanza geografica.
+    </p>
+    <div class="progetto-features">
+      <div class="progetto-feature">
+        <span class="progetto-feature__icona">📋</span>
+        <div>
+          <p class="progetto-feature__titolo">Questionario personalizzato</p>
+          <p class="progetto-feature__testo">Valuta le tue competenze e i tuoi interessi una volta sola</p>
+        </div>
+      </div>
+      <div class="progetto-feature">
+        <span class="progetto-feature__icona">🤝</span>
+        <div>
+          <p class="progetto-feature__titolo">Abbinamento intelligente</p>
+          <p class="progetto-feature__testo">L'algoritmo analizza affinità, competenze e vicinanza</p>
+        </div>
+      </div>
+      <div class="progetto-feature">
+        <span class="progetto-feature__icona">👤</span>
+        <div>
+          <p class="progetto-feature__titolo">Profili dedicati</p>
+          <p class="progetto-feature__testo">Studente, azienda e admin con accessi e viste differenziati</p>
+        </div>
+      </div>
+      <div class="progetto-feature">
+        <span class="progetto-feature__icona">🏢</span>
+        <div>
+          <p class="progetto-feature__titolo">Database aziende</p>
+          <p class="progetto-feature__testo">Ogni azienda partner ha un profilo con le proprie esigenze</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divisore">
+
+  <!-- SERVIZI DISPONIBILI -->
+  <p class="etichetta-sezione">Servizi disponibili</p>
+  <div class="servizi-lista">
+
+    <div class="servizio-row">
+      <div class="servizio-row__sinistra">
+        <div class="servizio-row__icona-wrap">
+          <svg viewBox="0 0 24 24"><path d="M3 9.75L12 3l9 6.75V21a1 1 0 01-1 1H4a1 1 0 01-1-1V9.75z"/><path d="M9 22V12h6v10"/></svg>
+        </div>
+        <div>
+          <p class="servizio-row__nome">Home</p>
+          <p class="servizio-row__badge servizio-row__badge--attivo">Disponibile</p>
+        </div>
+      </div>
+      <p class="servizio-row__desc">Pagina principale del portale. Panoramica del progetto e accesso rapido a tutte le sezioni.</p>
+    </div>
+
+    <div class="servizio-row">
+      <div class="servizio-row__sinistra">
+        <div class="servizio-row__icona-wrap">
+          <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="15" rx="1.5"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="17"/><line x1="9.5" y1="14.5" x2="14.5" y2="14.5"/></svg>
+        </div>
+        <div>
+          <p class="servizio-row__nome">Lista Aziende</p>
+          <p class="servizio-row__badge servizio-row__badge--attivo">Disponibile</p>
+        </div>
+      </div>
+      <p class="servizio-row__desc">Consulta le aziende partner dell'istituto che partecipano al programma di stage FSL estivo.</p>
+    </div>
+
+    <div class="servizio-row">
+      <div class="servizio-row__sinistra">
+        <div class="servizio-row__icona-wrap">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.58-7 8-7s8 3 8 7"/></svg>
+        </div>
+        <div>
+          <p class="servizio-row__nome">Profilo Studente</p>
+          <p class="servizio-row__badge servizio-row__badge--login">Richiede login</p>
+        </div>
+      </div>
+      <p class="servizio-row__desc">Visualizza il tuo profilo con i dati del questionario PCTO compilato, interessi e competenze registrate.</p>
+    </div>
+
+    <div class="servizio-row">
+      <div class="servizio-row__sinistra">
+        <div class="servizio-row__icona-wrap">
+          <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+        </div>
+        <div>
+          <p class="servizio-row__nome">Mappa Sede</p>
+          <p class="servizio-row__badge servizio-row__badge--attivo">Disponibile</p>
+        </div>
+      </div>
+      <p class="servizio-row__desc">Posizione dell'ITIS Pietro Paleocapa su mappa interattiva. Via Gavazzeni 29, Bergamo.</p>
+    </div>
+
+  </div>
+
+  <hr class="divisore">
+</main>
+{% endblock %}
