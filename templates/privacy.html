@@ -1,0 +1,354 @@
+{% extends 'base.html' %}
+{% block titolo %}Privacy & Sicurezza — Stage Match{% endblock %}
+
+{% block contenuto %}
+<main class="main privacy-main">
+
+  <div class="privacy-hero">
+    <div class="privacy-hero__icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+    </div>
+    <div>
+      <h1 class="privacy-hero__titolo">Privacy &amp; Sicurezza</h1>
+      <p class="privacy-hero__sub">Informativa ai sensi del Regolamento UE 2016/679 (GDPR)</p>
+    </div>
+    <div class="privacy-hero__badge">
+      <span>Progetto SitLab</span>
+      <span class="privacy-hero__badge-sep">·</span>
+      <span>ITIS P. Paleocapa — Bergamo</span>
+    </div>
+  </div>
+
+  <div class="privacy-tabs">
+    <button class="privacy-tab privacy-tab--attivo" onclick="switchTab('studente', this)">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      Informativa Studente
+    </button>
+    <button class="privacy-tab" onclick="switchTab('azienda', this)">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+      Informativa Azienda
+    </button>
+  </div>
+
+  {# ── MACRO diritti ── #}
+  {% macro diritto(svg, titolo, desc) %}
+  <div class="privacy-diritti__item">
+    <div class="privacy-diritti__ico">{{ svg|safe }}</div>
+    <span><strong>{{ titolo }}</strong> — {{ desc }}</span>
+  </div>
+  {% endmacro %}
+
+  {# ══ STUDENTE ══ #}
+  <div id="tab-studente" class="privacy-content">
+    <div class="privacy-grid">
+
+      <div class="privacy-card privacy-card--full">
+        <div class="privacy-card__num">1</div>
+        <div class="privacy-card__body">
+          <h2 class="privacy-card__titolo">Titolare e Responsabile del trattamento</h2>
+          <p class="privacy-card__testo">Il trattamento dei dati personali è gestito dal <strong>Gruppo PaleoMatch</strong>, operante sotto la diretta supervisione dei coordinatori del progetto <strong>SitLab</strong> presso l'ITIS Pietro Paleocapa di Bergamo.</p>
+          <div class="privacy-chip-row">
+            <span class="privacy-chip privacy-chip--navy">Gruppo PaleoMatch</span>
+            <span class="privacy-chip privacy-chip--accent">Progetto SitLab</span>
+            <span class="privacy-chip">ITIS P. Paleocapa</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="privacy-card">
+        <div class="privacy-card__num">2</div>
+        <div class="privacy-card__body">
+          <h2 class="privacy-card__titolo">Dati trattati</h2>
+          <p class="privacy-card__testo">Vengono raccolti esclusivamente i dati necessari al funzionamento del servizio:</p>
+          <ul class="privacy-list">
+            <li>
+              <div class="privacy-list__icon privacy-list__icon--blue">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <div><strong>Email scolastica</strong> fornita al momento della registrazione</div>
+            </li>
+            <li>
+              <div class="privacy-list__icon privacy-list__icon--purple">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+              </div>
+              <div><strong>Risposte al questionario PCTO</strong> — preferenze di competenza e interesse per attività lavorative</div>
+            </li>
+            <li>
+              <div class="privacy-list__icon privacy-list__icon--gold">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </div>
+              <div><strong>Dati anagrafici</strong> — Nome, Cognome, Classe</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="privacy-card">
+        <div class="privacy-card__num">3</div>
+        <div class="privacy-card__body">
+          <h2 class="privacy-card__titolo">Finalità del trattamento</h2>
+          <p class="privacy-card__testo">I dati sono raccolti con l'unico scopo di <strong>supportare lo studente nella ricerca dell'azienda</strong> per lo stage estivo PCTO, attraverso un sistema di abbinamento basato su competenze e richieste aziendali.</p>
+          <div class="privacy-notice">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            I dati <strong>non vengono utilizzati per scopi commerciali</strong> né condivisi al di fuori del progetto.
+          </div>
+        </div>
+      </div>
+
+      <div class="privacy-card">
+        <div class="privacy-card__num">4</div>
+        <div class="privacy-card__body">
+          <h2 class="privacy-card__titolo">Destinatari e trasferimenti</h2>
+          <p class="privacy-card__testo">I dati possono essere comunicati ai seguenti soggetti, nei limiti strettamente necessari:</p>
+          <div class="privacy-destinatari">
+            <div class="privacy-dest__item">
+              <div class="privacy-dest__icona privacy-dest__icona--green">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+              </div>
+              <div>
+                <p class="privacy-dest__label">Aziende partner</p>
+                <p class="privacy-dest__sub">Per individuare studenti compatibili con il proprio profilo di stage</p>
+              </div>
+            </div>
+            <div class="privacy-dest__item">
+              <div class="privacy-dest__icona privacy-dest__icona--blue">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+              </div>
+              <div>
+                <p class="privacy-dest__label">Gruppo PaleoMatch</p>
+                <p class="privacy-dest__sub">Per analisi, controllo qualità e manutenzione del sistema</p>
+              </div>
+            </div>
+            <div class="privacy-dest__item">
+              <div class="privacy-dest__icona privacy-dest__icona--gold">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </div>
+              <div>
+                <p class="privacy-dest__label">Lo studente stesso</p>
+                <p class="privacy-dest__sub">Accesso riservato al proprio profilo — nessuna condivisione con altri studenti</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="privacy-card">
+        <div class="privacy-card__num">5</div>
+        <div class="privacy-card__body">
+          <h2 class="privacy-card__titolo">Conservazione dei dati</h2>
+          <p class="privacy-card__testo">I dati personali vengono conservati per un periodo variabile tra <strong>qualche mese</strong> e <strong>un massimo di due anni</strong>, in funzione del ciclo scolastico e della durata del progetto.</p>
+          <div class="privacy-timeline">
+            <div class="privacy-timeline__item">
+              <div class="privacy-timeline__dot privacy-timeline__dot--min"></div>
+              <div><p class="privacy-timeline__label">Minimo</p><p class="privacy-timeline__val">Qualche mese</p></div>
+            </div>
+            <div class="privacy-timeline__bar"></div>
+            <div class="privacy-timeline__item">
+              <div class="privacy-timeline__dot privacy-timeline__dot--max"></div>
+              <div><p class="privacy-timeline__label">Massimo</p><p class="privacy-timeline__val">2 anni</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="privacy-card">
+        <div class="privacy-card__num">6</div>
+        <div class="privacy-card__body">
+          <h2 class="privacy-card__titolo">Diritti dell'interessato</h2>
+          <p class="privacy-card__testo">Ogni studente può esercitare, in qualsiasi momento, i seguenti diritti previsti dal GDPR:</p>
+          <div class="privacy-diritti">
+            <div class="privacy-diritti__item">
+              <div class="privacy-diritti__ico"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></div>
+              <span><strong>Cancellazione</strong> — richiedere l'eliminazione dei propri dati</span>
+            </div>
+            <div class="privacy-diritti__item">
+              <div class="privacy-diritti__ico"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+              <span><strong>Rettifica</strong> — modificare dati inesatti o incompleti</span>
+            </div>
+            <div class="privacy-diritti__item">
+              <div class="privacy-diritti__ico"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+              <span><strong>Accesso</strong> — consultare i propri dati in modo riservato</span>
+            </div>
+            <div class="privacy-diritti__item">
+              <div class="privacy-diritti__ico"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/></svg></div>
+              <span><strong>Revisione</strong> — richiedere verifica e aggiornamento del profilo</span>
+            </div>
+            <div class="privacy-diritti__item">
+              <div class="privacy-diritti__ico"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+              <span><strong>Sicurezza</strong> — accesso protetto e autenticato ai propri dati</span>
+            </div>
+          </div>
+          <p class="privacy-card__testo" style="margin-top:1rem;font-size:.78rem;">Per esercitare questi diritti, contatta il responsabile del progetto SitLab tramite i canali scolastici ufficiali.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  {# ══ AZIENDA ══ #}
+  <div id="tab-azienda" class="privacy-content" style="display:none;">
+    <div class="privacy-grid">
+
+      <div class="privacy-card privacy-card--full">
+        <div class="privacy-card__num" style="background:rgba(16,185,129,.12);color:#059669;">1</div>
+        <div class="privacy-card__body">
+          <h2 class="privacy-card__titolo">Titolare e Responsabile del trattamento</h2>
+          <p class="privacy-card__testo">Il trattamento dei dati aziendali è gestito dal <strong>Gruppo PaleoMatch</strong>, operante sotto la diretta supervisione dei coordinatori del progetto <strong>SitLab</strong> presso l'ITIS Pietro Paleocapa di Bergamo.</p>
+          <div class="privacy-chip-row">
+            <span class="privacy-chip privacy-chip--navy">Gruppo PaleoMatch</span>
+            <span class="privacy-chip privacy-chip--green">Progetto SitLab</span>
+            <span class="privacy-chip">ITIS P. Paleocapa</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="privacy-card">
+        <div class="privacy-card__num" style="background:rgba(16,185,129,.12);color:#059669;">2</div>
+        <div class="privacy-card__body">
+          <h2 class="privacy-card__titolo">Dati trattati</h2>
+          <p class="privacy-card__testo">Vengono raccolti esclusivamente i dati necessari al funzionamento del servizio:</p>
+          <ul class="privacy-list">
+            <li>
+              <div class="privacy-list__icon privacy-list__icon--blue">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <div><strong>Email aziendale</strong> fornita al momento della registrazione</div>
+            </li>
+            <li>
+              <div class="privacy-list__icon privacy-list__icon--purple">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+              </div>
+              <div><strong>Risposte al questionario PCTO</strong> — attività previste, livello richiesto, tipo di formazione offerta</div>
+            </li>
+            <li>
+              <div class="privacy-list__icon privacy-list__icon--gold">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+              </div>
+              <div><strong>Dati identificativi</strong> — Nome azienda, Descrizione</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="privacy-card">
+        <div class="privacy-card__num" style="background:rgba(16,185,129,.12);color:#059669;">3</div>
+        <div class="privacy-card__body">
+          <h2 class="privacy-card__titolo">Finalità del trattamento</h2>
+          <p class="privacy-card__testo">I dati sono raccolti con l'unico scopo di <strong>facilitare l'abbinamento tra aziende e studenti</strong> per lo stage estivo PCTO, valorizzando le caratteristiche specifiche di ogni realtà aziendale.</p>
+          <div class="privacy-notice privacy-notice--green">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            I dati <strong>non vengono utilizzati per scopi commerciali</strong> né trasferiti a soggetti esterni al progetto.
+          </div>
+        </div>
+      </div>
+
+      <div class="privacy-card">
+        <div class="privacy-card__num" style="background:rgba(16,185,129,.12);color:#059669;">4</div>
+        <div class="privacy-card__body">
+          <h2 class="privacy-card__titolo">Destinatari e trasferimenti</h2>
+          <p class="privacy-card__testo">I dati possono essere comunicati ai seguenti soggetti:</p>
+          <div class="privacy-destinatari">
+            <div class="privacy-dest__item">
+              <div class="privacy-dest__icona privacy-dest__icona--green">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+              </div>
+              <div>
+                <p class="privacy-dest__label">Aziende stesse</p>
+                <p class="privacy-dest__sub">Accesso riservato al proprio profilo aziendale</p>
+              </div>
+            </div>
+            <div class="privacy-dest__item">
+              <div class="privacy-dest__icona privacy-dest__icona--blue">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+              </div>
+              <div>
+                <p class="privacy-dest__label">Gruppo PaleoMatch</p>
+                <p class="privacy-dest__sub">Per analisi, controllo qualità e manutenzione del sistema</p>
+              </div>
+            </div>
+            <div class="privacy-dest__item">
+              <div class="privacy-dest__icona privacy-dest__icona--gold">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </div>
+              <div>
+                <p class="privacy-dest__label">Studenti (dati aggregati)</p>
+                <p class="privacy-dest__sub">Il profilo aziendale è visibile agli studenti per fini di abbinamento, senza condivisione di dati sensibili</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="privacy-card">
+        <div class="privacy-card__num" style="background:rgba(16,185,129,.12);color:#059669;">5</div>
+        <div class="privacy-card__body">
+          <h2 class="privacy-card__titolo">Conservazione dei dati</h2>
+          <p class="privacy-card__testo">I dati aziendali vengono conservati per un periodo variabile tra <strong>qualche mese</strong> e <strong>un massimo di due anni</strong>, allineato al ciclo scolastico di riferimento.</p>
+          <div class="privacy-timeline">
+            <div class="privacy-timeline__item">
+              <div class="privacy-timeline__dot privacy-timeline__dot--min"></div>
+              <div><p class="privacy-timeline__label">Minimo</p><p class="privacy-timeline__val">Qualche mese</p></div>
+            </div>
+            <div class="privacy-timeline__bar"></div>
+            <div class="privacy-timeline__item">
+              <div class="privacy-timeline__dot privacy-timeline__dot--max"></div>
+              <div><p class="privacy-timeline__label">Massimo</p><p class="privacy-timeline__val">2 anni</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="privacy-card">
+        <div class="privacy-card__num" style="background:rgba(16,185,129,.12);color:#059669;">6</div>
+        <div class="privacy-card__body">
+          <h2 class="privacy-card__titolo">Diritti dell'interessato</h2>
+          <p class="privacy-card__testo">Ogni azienda registrata può esercitare, in qualsiasi momento, i seguenti diritti previsti dal GDPR:</p>
+          <div class="privacy-diritti">
+            <div class="privacy-diritti__item">
+              <div class="privacy-diritti__ico"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></div>
+              <span><strong>Cancellazione</strong> — richiedere l'eliminazione dei propri dati aziendali</span>
+            </div>
+            <div class="privacy-diritti__item">
+              <div class="privacy-diritti__ico"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+              <span><strong>Rettifica</strong> — modificare dati inesatti o incompleti</span>
+            </div>
+            <div class="privacy-diritti__item">
+              <div class="privacy-diritti__ico"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+              <span><strong>Accesso</strong> — consultare il profilo aziendale in modo riservato</span>
+            </div>
+            <div class="privacy-diritti__item">
+              <div class="privacy-diritti__ico"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/></svg></div>
+              <span><strong>Revisione</strong> — richiedere verifica e aggiornamento dei dati</span>
+            </div>
+            <div class="privacy-diritti__item">
+              <div class="privacy-diritti__ico"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div>
+              <span><strong>Sicurezza</strong> — accesso protetto e autenticato al proprio profilo</span>
+            </div>
+          </div>
+          <p class="privacy-card__testo" style="margin-top:1rem;font-size:.78rem;">Per esercitare questi diritti, contatta il responsabile del progetto SitLab tramite i canali scolastici ufficiali.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="privacy-gdpr-nota">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <p>Questa informativa è redatta ai sensi dell'art. 13 del <strong>Regolamento UE 2016/679 (GDPR)</strong>. Il progetto Stage Match è sviluppato a <strong>scopo esclusivamente didattico</strong> nell'ambito del progetto SitLab — ITIS Pietro Paleocapa, Bergamo.</p>
+  </div>
+
+</main>
+{% endblock %}
+
+{% block script %}
+<script>
+function switchTab(tab, btn) {
+  document.querySelectorAll('.privacy-content').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('.privacy-tab').forEach(el => el.classList.remove('privacy-tab--attivo'));
+  document.getElementById('tab-' + tab).style.display = 'block';
+  btn.classList.add('privacy-tab--attivo');
+}
+</script>
+{% endblock %}

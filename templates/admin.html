@@ -1,89 +1,270 @@
 {% extends 'base.html' %}
-{% block titolo %}Pannello Admin — Stage Match{% endblock %}
+{% block titolo %}Admin — Stage Match{% endblock %}
 
 {% block contenuto %}
 <main class="main">
-  <div class="admin-header">
-    <div>
-      <p class="etichetta-sezione">Accesso riservato</p>
-      <h2 class="pagina-titolo">Pannello Amministratore</h2>
-      <p class="pagina-sub">Gestione del database questionari PCTO</p>
+
+<div class="admin-header">
+  <div>
+    <p class="etichetta-sezione">Gestione</p>
+    <h1 class="pagina-titolo">Pannello Admin</h1>
+    <p class="pagina-sub">Benvenuto, {{ utente.name }}</p>
+  </div>
+  <div class="admin-stats">
+    <div class="admin-stat">
+      <span class="admin-stat__num">{{ studenti|length }}</span>
+      <span class="admin-stat__label">Studenti</span>
     </div>
-    <div class="admin-stats">
-      <div class="admin-stat">
-        <span class="admin-stat__num">{{ studenti|length }}</span>
-        <span class="admin-stat__label">Studenti registrati</span>
-      </div>
+    <div class="admin-stat">
+      <span class="admin-stat__num">{{ aziende|length }}</span>
+      <span class="admin-stat__label">Aziende</span>
+    </div>
+    <div class="admin-stat">
+      <span class="admin-stat__num">{{ (studenti|selectattr("admin_modified")|list)|length }}</span>
+      <span class="admin-stat__label">Modificati</span>
     </div>
   </div>
+</div>
 
-  {% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    {% for cat, msg in messages %}
-    <div class="admin-flash admin-flash--{{ cat }}">{{ msg }}</div>
-    {% endfor %}
-  {% endif %}
-  {% endwith %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for cat, msg in messages %}
+  <div class="admin-flash admin-flash--{{ cat }}">{{ msg }}</div>
+  {% endfor %}
+{% endwith %}
 
-  <div class="admin-tabella-wrap">
-    <div class="admin-tabella-header">
-      <p class="admin-tabella-titolo">Elenco studenti</p>
-      <input type="text" class="admin-cerca" id="cercaStudente" placeholder="Cerca per nome, cognome o email…" oninput="filtraAdmin()">
+<!-- SYNC -->
+<div class="pesi-panel" style="margin-bottom:1.5rem;">
+  <div class="pesi-panel__header" style="cursor:default;">
+    <div class="pesi-panel__header-left">
+      <div class="pesi-panel__icon">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+      </div>
+      <div>
+        <p class="pesi-panel__titolo">Sincronizzazione Google Sheets</p>
+        <p class="pesi-panel__sub">Forza il caricamento dei dati dai questionari Google</p>
+      </div>
+    </div>
+    <div style="display:flex;gap:.65rem;flex-wrap:wrap;">
+      <form method="post" action="{{ url_for('admin_sync_studenti') }}" style="display:inline;">
+        <button type="submit" class="admin-btn-salva" style="font-size:.72rem;padding:.52rem 1rem;">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:.35rem;"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/></svg>Sync Studenti
+        </button>
+      </form>
+      <form method="post" action="{{ url_for('admin_sync_aziende') }}" style="display:inline;">
+        <button type="submit" class="admin-btn-salva" style="font-size:.72rem;padding:.52rem 1rem;background:var(--navy-mid);">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:.35rem;"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>Sync Aziende
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- PESI -->
+<div class="pesi-panel">
+  <div class="pesi-panel__header" onclick="togglePesi()">
+    <div class="pesi-panel__header-left">
+      <div class="pesi-panel__icon">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <div>
+        <p class="pesi-panel__titolo">Pesi Algoritmo</p>
+        <p class="pesi-panel__sub">Configura l'importanza di ciascuna area per il calcolo del match</p>
+      </div>
+    </div>
+    <span class="pesi-panel__toggle" id="pesiToggleLabel">Espandi</span>
+  </div>
+
+  <div id="pesiContent" style="display:none;">
+    <div class="pesi-panel__info">
+      <div class="pesi-info-griglia">
+        {% for p in pesi %}
+        {% set larghezza = ((p.peso / 3.0) * 100)|round|int %}
+        {% if p.peso >= 2.5 %}{% set bar_bg = "#ef4444" %}
+        {% elif p.peso >= 1.8 %}{% set bar_bg = "#f97316" %}
+        {% elif p.peso >= 1.3 %}{% set bar_bg = "#f59e0b" %}
+        {% elif p.peso >= 0.9 %}{% set bar_bg = "#22c55e" %}
+        {% else %}{% set bar_bg = "#9ca3af" %}{% endif %}
+        <div class="pesi-info-item">
+          <span class="pesi-info-item__val">{{ p.peso }}</span>
+          <span class="pesi-info-item__label">Q{{ p.domanda }}</span>
+          <div class="pesi-info-item__bar" style="background:{{ bar_bg }};width:{{ larghezza }}%;"></div>
+        </div>
+        {% endfor %}
+      </div>
     </div>
 
-    <div class="admin-tabella">
-      <div class="admin-tabella__head">
-        <span>#</span>
-        <span>Cognome e Nome</span>
-        <span>Email</span>
-        <span>Residenza</span>
-        <span>Risposte</span>
-        <span></span>
-      </div>
-
-      {% for s in studenti %}
-      <div class="admin-tabella__riga" data-search="{{ (s.Cognome ~ ' ' ~ s.Nome ~ ' ' ~ s.Indirizzo_email)|lower }}">
-        <span class="admin-tabella__id">{{ s.id }}</span>
-        <span class="admin-tabella__nome">{{ s.Cognome }} {{ s.Nome }}</span>
-        <span class="admin-tabella__email">{{ s.Indirizzo_email }}</span>
-        <span class="admin-tabella__luogo">{{ s.Luogo_Di_Residenza or '—' }}</span>
-        <span class="admin-tabella__risposte">
-          {% set compilate = namespace(n=0) %}
-          {% for i in range(1, 20) %}
-            {% if s['Interesse_' ~ i] is not none %}{% set compilate.n = compilate.n + 1 %}{% endif %}
+    <form method="post" action="{{ url_for('admin_pesi_salva') }}" id="formPesi">
+      {% set zone = [("Sviluppo Software",[1,2,3,4,5,6]),("Web & Dati",[7,8,9,10]),("Sistemi & Reti",[11,12,13,14,15,16,17,18,19])] %}
+      {% set domande_nomi = {1:"Office-automation",2:"Software console",3:"App mobile",4:"Reti/IoT",5:"Database/multimedialità",6:"VR/AR",7:"Database SQL/NoSQL",8:"Siti statici",9:"Siti dinamici/API",10:"Documentazione/PM",11:"Hardware PC",12:"Software/antivirus",13:"OS client",14:"OS server",15:"Linux/shell",16:"Help-desk",17:"Reti TCP/IP",18:"Data-entry",19:"Segreteria"} %}
+      <div class="pesi-sezioni">
+        {% for nome_zona, indici in zone %}
+        <div class="pesi-zona">
+          <p class="pesi-zona__titolo">{{ nome_zona }}</p>
+          {% for i in indici %}
+          {% set p_obj = pesi|selectattr("domanda","equalto",i)|first %}
+          <div class="peso-riga">
+            <span class="peso-riga__num">{{ i }}</span>
+            <span class="peso-riga__nome">{{ domande_nomi[i] }}</span>
+            <div class="peso-riga__controllo">
+              <input type="range" class="peso-slider" min="0.5" max="3" step="0.5"
+                     value="{{ p_obj.peso if p_obj else 1.0 }}"
+                     oninput="aggiornaPeso({{ i }}, this.value)" id="slider_{{ i }}">
+              <span class="peso-badge" id="badge_{{ i }}"></span>
+              <input type="number" class="peso-num" name="peso_{{ i }}"
+                     id="num_{{ i }}" min="0.1" max="5" step="0.1"
+                     value="{{ p_obj.peso if p_obj else 1.0 }}"
+                     oninput="aggiornaDaNum({{ i }}, this.value)">
+            </div>
+          </div>
           {% endfor %}
-          {{ compilate.n }} / 19
-        </span>
-        <span class="admin-tabella__azioni">
-          <form method="POST" action="{{ url_for('admin_elimina', id=s.id) }}"
-                onsubmit="return confermaElimina('{{ s.Cognome }} {{ s.Nome }}')">
-            <button type="submit" class="admin-btn-elimina" title="Elimina record">
-              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
-              </svg>
-              Elimina
-            </button>
-          </form>
-        </span>
+        </div>
+        {% endfor %}
       </div>
-      {% else %}
-      <div class="admin-tabella__vuoto">Nessuno studente nel database.</div>
-      {% endfor %}
-    </div>
+      <div class="pesi-footer">
+        <span class="pesi-stato" id="pesiStato"></span>
+        <div style="display:flex;gap:.75rem;">
+          <button type="button" class="admin-btn-ghost" onclick="resetPesi()">Ripristina predefiniti</button>
+          <button type="submit" class="admin-btn-salva">Salva pesi</button>
+        </div>
+      </div>
+    </form>
   </div>
+</div>
+
+<!-- STUDENTI -->
+<div class="admin-tabella-wrap" style="margin-bottom:1.5rem;">
+  <div class="admin-tabella-header">
+    <span class="admin-tabella-titolo">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:.4rem;stroke:var(--accent);"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      Studenti ({{ studenti|length }})
+    </span>
+    <input class="admin-cerca" type="text" placeholder="Filtra studenti…" oninput="filtraTabella(this,'tblStudenti')">
+  </div>
+  <div class="admin-tabella__head">
+    <span>ID</span><span>Nome</span><span>Email</span><span>Classe</span><span>Risp.</span><span>Azioni</span>
+  </div>
+  <div id="tblStudenti">
+  {% for q in studenti %}
+  {% set n_risp = [] %}
+  {% for i in range(1,20) %}{% if q["Interesse_"~i] is not none %}{% set _ = n_risp.append(1) %}{% endif %}{% endfor %}
+  <div class="admin-tabella__riga" data-cerca="{{ q.Cognome|lower }} {{ q.Nome|lower }} {{ q.Indirizzo_email|lower }}">
+    <span class="admin-tabella__id">
+      #{{ q.id }}{% if q.admin_modified %}<span class="badge-modificato" title="Modificato manualmente">M</span>{% endif %}
+    </span>
+    <span class="admin-tabella__nome">{{ q.Cognome }} {{ q.Nome }}</span>
+    <span class="admin-tabella__email">{{ q.Indirizzo_email }}</span>
+    <span class="admin-tabella__luogo">{{ q.Classe or "—" }}</span>
+    <span class="admin-tabella__risposte">{{ n_risp|length }}/19</span>
+    <span class="admin-tabella__azioni">
+      <a href="{{ url_for('admin_profilo', id=q.id) }}" class="admin-btn-azione admin-btn-azione--vedi">Vedi</a>
+      <a href="{{ url_for('admin_modifica', id=q.id) }}" class="admin-btn-azione admin-btn-azione--modifica">Modifica</a>
+      <form method="post" action="{{ url_for('admin_elimina', id=q.id) }}" style="display:inline;" onsubmit="return confirm('Eliminare {{ q.Cognome }} {{ q.Nome }}?')">
+        <button type="submit" class="admin-btn-azione admin-btn-azione--elimina">Elimina</button>
+      </form>
+    </span>
+  </div>
+  {% else %}
+  <div class="admin-tabella__vuoto">Nessuno studente nel database.</div>
+  {% endfor %}
+  </div>
+</div>
+
+<!-- AZIENDE -->
+<div class="admin-tabella-wrap">
+  <div class="admin-tabella-header">
+    <span class="admin-tabella-titolo">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:.4rem;stroke:#10b981;"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+      Aziende ({{ aziende|length }})
+    </span>
+    <input class="admin-cerca" type="text" placeholder="Filtra aziende…" oninput="filtraTabella(this,'tblAziende')">
+  </div>
+  <div class="admin-tabella__head">
+    <span>ID</span><span>Azienda</span><span>Email</span><span>Descrizione</span><span>Att.</span><span>Azioni</span>
+  </div>
+  <div id="tblAziende">
+  {% for az in aziende %}
+  {% set n_att = [] %}
+  {% for i in range(1,20) %}{% if az["Prevista_"~i] %}{% set _ = n_att.append(1) %}{% endif %}{% endfor %}
+  <div class="admin-tabella__riga" data-cerca="{{ az.Azienda|lower }} {{ (az.Email or '')|lower }}">
+    <span class="admin-tabella__id">
+      #{{ az.id }}{% if az.admin_modified %}<span class="badge-modificato" title="Modificato manualmente">M</span>{% endif %}
+    </span>
+    <span class="admin-tabella__nome">{{ az.Azienda }}</span>
+    <span class="admin-tabella__email">{{ az.Email or "—" }}</span>
+    <span class="admin-tabella__luogo" style="font-size:.76rem;">{{ (az.Descrizione or "—")[:30] }}{% if az.Descrizione and az.Descrizione|length > 30 %}…{% endif %}</span>
+    <span class="admin-tabella__risposte">{{ n_att|length }}/19</span>
+    <span class="admin-tabella__azioni">
+      <a href="{{ url_for('admin_azienda_profilo', id=az.id) }}" class="admin-btn-azione admin-btn-azione--vedi">Vedi</a>
+      <a href="{{ url_for('admin_azienda_modifica', id=az.id) }}" class="admin-btn-azione admin-btn-azione--modifica">Modifica</a>
+      <form method="post" action="{{ url_for('admin_azienda_elimina', id=az.id) }}" style="display:inline;" onsubmit="return confirm('Eliminare {{ az.Azienda }}?')">
+        <button type="submit" class="admin-btn-azione admin-btn-azione--elimina">Elimina</button>
+      </form>
+    </span>
+  </div>
+  {% else %}
+  <div class="admin-tabella__vuoto">Nessuna azienda nel database.</div>
+  {% endfor %}
+  </div>
+</div>
+
 </main>
 {% endblock %}
 
 {% block script %}
 <script>
-function filtraAdmin() {
-  const q = document.getElementById('cercaStudente').value.toLowerCase();
-  document.querySelectorAll('.admin-tabella__riga').forEach(r => {
-    r.style.display = r.dataset.search.includes(q) ? '' : 'none';
+const ETICHETTE = {'0.5':'Bassa','1.0':'Normale','1.5':'Importante','2.0':'Molto imp.','3.0':'Prioritario'};
+const COLORI    = {'0.5':'#9ca3af','1.0':'#22c55e','1.5':'#f59e0b','2.0':'#f97316','3.0':'#ef4444'};
+
+function aggiornaPeso(i, val) {
+  const v = parseFloat(val).toFixed(1);
+  const badge = document.getElementById('badge_'+i);
+  const num   = document.getElementById('num_'+i);
+  if (badge) { badge.textContent = ETICHETTE[v] || v; badge.style.background = COLORI[v] || '#888'; }
+  if (num)   num.value = v;
+  segnaModificato();
+}
+function aggiornaDaNum(i, val) {
+  const v = Math.max(0.1, Math.min(5.0, parseFloat(val) || 1.0)).toFixed(1);
+  const slider = document.getElementById('slider_'+i);
+  const badge  = document.getElementById('badge_'+i);
+  if (slider) slider.value = v;
+  if (badge)  { badge.textContent = ETICHETTE[v] || v; badge.style.background = COLORI[v] || '#888'; }
+  segnaModificato();
+}
+function resetPesi() {
+  if (!confirm('Ripristinare tutti i pesi a 1.0?')) return;
+  for (let i=1;i<=19;i++) {
+    const slider = document.getElementById('slider_'+i);
+    const num    = document.getElementById('num_'+i);
+    if (slider) slider.value = 1.0;
+    if (num)    num.value = '1.0';
+    aggiornaPeso(i, 1.0);
+  }
+}
+function segnaModificato() {
+  const el = document.getElementById('pesiStato');
+  if (el) { el.textContent = 'Modifiche non salvate'; el.className = 'pesi-stato pesi-stato--dirty'; }
+}
+function togglePesi() {
+  const c = document.getElementById('pesiContent');
+  const l = document.getElementById('pesiToggleLabel');
+  const aperto = c.style.display !== 'none';
+  c.style.display = aperto ? 'none' : '';
+  if (l) l.textContent = aperto ? 'Espandi' : 'Chiudi';
+}
+function filtraTabella(inp, tbId) {
+  const q = inp.value.trim().toLowerCase();
+  document.querySelectorAll('#'+tbId+' .admin-tabella__riga').forEach(r => {
+    r.style.display = !q || (r.dataset.cerca||'').includes(q) ? '' : 'none';
   });
 }
-function confermaElimina(nome) {
-  return confirm(`Eliminare definitivamente il record di "${nome}"?\nQuesta operazione non può essere annullata.`);
-}
+document.addEventListener('DOMContentLoaded', () => {
+  for (let i=1;i<=19;i++) {
+    const slider = document.getElementById('slider_'+i);
+    if (slider) aggiornaPeso(i, slider.value);
+  }
+  const stato = document.getElementById('pesiStato');
+  if (stato) { stato.textContent = 'Pesi caricati'; stato.className = 'pesi-stato pesi-stato--ok'; }
+});
 </script>
 {% endblock %}

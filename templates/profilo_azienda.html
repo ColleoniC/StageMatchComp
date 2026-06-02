@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+{% block titolo %}{% if az %}Profilo Azienda — {{ az.Azienda }}{% else %}Profilo Azienda{% endif %}{% endblock %}
+
+{% block contenuto %}
+<main class="main profilo-main">
+
+{% set domande = {
+   1:"Office-automation (Excel, Word, Access)",
+   2:"Software console / Windows, testing",
+   3:"App per dispositivi mobile",
+   4:"Software di rete e applicazioni IoT",
+   5:"Gestione dati (database) e multimedialità",
+   6:"Realtà virtuale / aumentata",
+   7:"Database, procedure SQL / NoSQL",
+   8:"Siti web statici e contenuti multimediali",
+   9:"Siti web dinamici (web-app, API REST)",
+  10:"Documentazione tecnica e project management",
+  11:"Installazione e manutenzione hardware PC",
+  12:"Configurazione software applicativi / antivirus",
+  13:"Sistemi operativi client",
+  14:"Sistemi operativi server",
+  15:"Ambienti Linux e script shell",
+  16:"Help-desk e supporto clienti software",
+  17:"Configurazione reti TCP/IP",
+  18:"Data-entry magazzino / contabilità",
+  19:"Compiti di ufficio e segreteria"
+} %}
+{% set zone = [
+  ("Sviluppo Software",[1,2,3,4,5,6],"#3b82f6"),
+  ("Web & Dati",[7,8,9,10],"#8b5cf6"),
+  ("Sistemi & Reti",[11,12,13,14,15,16,17,18,19],"#f59e0b")
+] %}
+
+{% if not az %}
+<div class="profilo-banner banner--minimo">
+  <div class="profilo-banner__avatar profilo-avatar--azienda">A</div>
+  <div class="profilo-banner__info">
+    <p class="profilo-banner__nome">Profilo non disponibile</p>
+  </div>
+</div>
+<div class="profilo-vuoto">
+  <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+  <p class="profilo-vuoto__titolo">Profilo non disponibile</p>
+  <p>{% if vista_propria %}Il tuo profilo non è ancora nel database. Compila il questionario PCTO Azienda.{% else %}Questa azienda non è stata trovata nel database.{% endif %}</p>
+  <a href="{{ url_for("lista_aziende") }}" class="admin-back" style="margin-top:1.5rem;display:inline-block;">← Lista Aziende</a>
+</div>
+
+{% else %}
+
+{# Calcola punteggio globale per colore banner #}
+{% set ns_tot = namespace(pp=0, mp=0) %}
+{% for _, indici, _ in zone %}
+  {% for i in indici %}
+    {% set p_obj = pesi|selectattr("domanda","equalto",i)|first if pesi is defined else none %}
+    {% set m = p_obj.peso if p_obj else 1.0 %}
+    {% if az["Prevista_" ~ i] %}{% set ns_tot.pp = ns_tot.pp + m %}{% endif %}
+    {% set ns_tot.mp = ns_tot.mp + m %}
+  {% endfor %}
+{% endfor %}
+{% set score_globale = ((ns_tot.pp / ns_tot.mp) * 100)|round|int if ns_tot.mp > 0 else 0 %}
+
+{% if score_globale >= 80 %}{% set banner_cls = "banner--eccellente" %}
+{% elif score_globale >= 60 %}{% set banner_cls = "banner--ottimo" %}
+{% elif score_globale >= 40 %}{% set banner_cls = "banner--buono" %}
+{% elif score_globale >= 20 %}{% set banner_cls = "banner--base" %}
+{% else %}{% set banner_cls = "banner--minimo" %}{% endif %}
+
+<div class="profilo-banner {{ banner_cls }}">
+  <div class="profilo-banner__avatar profilo-avatar--azienda">A</div>
+  <div class="profilo-banner__info">
+    <p class="profilo-banner__nome">{{ az.Azienda }}</p>
+    {% if az.Email %}<p class="profilo-banner__email">{{ az.Email }}</p>{% endif %}
+    {% if az.Descrizione %}
+    <p class="profilo-banner__dettaglio">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+      {{ az.Descrizione[:80] }}{% if az.Descrizione|length > 80 %}…{% endif %}
+    </p>
+    {% endif %}
+  </div>
+  <div class="profilo-banner__azioni">
+    {% if vista_propria %}
+    <div class="profilo-banner__badge" style="background:rgba(16,185,129,.15);color:#059669;border-color:rgba(16,185,129,.3);">Il tuo profilo</div>
+    <div class="profilo-banner__score">{{ score_globale }}%</div>
+    <a href="{{ url_for("profilo_modifica_azienda") }}" class="btn-modifica-profilo">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Modifica
+    </a>
+    <a href="{{ url_for('match') }}" class="btn-match-profilo">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      Match
+    </a>
+    {% else %}
+    <div class="profilo-banner__badge" style="background:rgba(16,185,129,.15);color:#059669;border-color:rgba(16,185,129,.3);">Azienda PCTO</div>
+    <div class="profilo-banner__score">{{ score_globale }}%</div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="profilo-layout">
+
+  <div class="profilo-col profilo-col--sx">
+
+    <p class="profilo-sezione-titolo">Dati azienda</p>
+    <div class="profilo-anagrafica">
+      <div class="profilo-anagrafica__riga">
+        <span class="profilo-anagrafica__label">Azienda</span>
+        <span class="profilo-anagrafica__val">{{ az.Azienda }}</span>
+      </div>
+      {% if az.Email %}
+      <div class="profilo-anagrafica__riga">
+        <span class="profilo-anagrafica__label">Email</span>
+        <span class="profilo-anagrafica__val" style="word-break:break-all;font-size:.78rem;">{{ az.Email }}</span>
+      </div>
+      {% endif %}
+      {% if az.Descrizione %}
+      <div class="profilo-anagrafica__riga" style="align-items:flex-start;">
+        <span class="profilo-anagrafica__label">Descrizione</span>
+        <span class="profilo-anagrafica__val" style="font-size:.78rem;text-align:right;line-height:1.4;">{{ az.Descrizione }}</span>
+      </div>
+      {% endif %}
+    </div>
+
+    <p class="profilo-sezione-titolo" style="margin-top:1.5rem;">Legenda Formazione</p>
+    <div class="profilo-legenda">
+      <div class="profilo-legenda__item"><span class="az-form-badge az-form-badge--C">C</span><span>Costante</span></div>
+      <div class="profilo-legenda__item"><span class="az-form-badge az-form-badge--NP">NP</span><span>Non prevista</span></div>
+      <div class="profilo-legenda__item"><span class="az-form-badge az-form-badge--F">F</span><span>Frequente</span></div>
+      <div class="profilo-legenda__item"><span class="az-form-badge az-form-badge--B">B</span><span>Base</span></div>
+    </div>
+
+    <p class="profilo-sezione-titolo" style="margin-top:1.75rem;">Analisi per area</p>
+    <p style="font-size:.74rem;color:var(--testo-chiaro);margin-bottom:1rem;line-height:1.5;">Livello richiesto e copertura attività previste.</p>
+
+    {% for nome_zona, indici, colore in zone %}
+    {% set ns = namespace(pl=0,ml=0,pp=0,mp=0) %}
+    {% for i in indici %}
+      {% set p_obj = pesi|selectattr("domanda","equalto",i)|first if pesi is defined else none %}
+      {% set m = p_obj.peso if p_obj else 1.0 %}
+      {% if az["Prevista_" ~ i] %}
+        {% set lv = az["Livello_" ~ i] %}
+        {% if lv is not none %}{% set ns.pl = ns.pl + (lv * m) %}{% endif %}
+        {% set ns.ml = ns.ml + (m * 5) %}
+        {% set ns.pp = ns.pp + m %}
+      {% endif %}
+      {% set ns.mp = ns.mp + m %}
+    {% endfor %}
+    {% set pct_l = ((ns.pl / ns.ml)*100)|round|int if ns.ml > 0 else 0 %}
+    {% set pct_p = ((ns.pp / ns.mp)*100)|round|int if ns.mp > 0 else 0 %}
+
+    <div class="scorecard" style="--sc-color:{{ colore }};">
+      <div class="scorecard__header">
+        <div class="scorecard__dot"></div>
+        <span class="scorecard__nome">{{ nome_zona }}</span>
+        <span class="scorecard__pct-big">{{ pct_p }}%</span>
+      </div>
+      <div class="scorecard__bars">
+        <div class="scorecard__bar-row">
+          <span class="scorecard__bar-label">Livello richiesto</span>
+          <div class="scorecard__track"><div class="scorecard__fill" style="width:{{pct_l}}%;background:{{colore}};"></div></div>
+          <span class="scorecard__pct">{{pct_l}}%</span>
+        </div>
+        <div class="scorecard__bar-row">
+          <span class="scorecard__bar-label">Attività previste</span>
+          <div class="scorecard__track"><div class="scorecard__fill" style="width:{{pct_p}}%;background:{{colore}};opacity:.65;"></div></div>
+          <span class="scorecard__pct">{{pct_p}}%</span>
+        </div>
+      </div>
+      <div class="scorecard__punti">
+        <span>Liv: {{ ns.pl|round(1) }}/{{ ns.ml|round(1) }}</span>
+        <span>Att: {{ ns.pp|round(1) }}/{{ ns.mp|round(1) }}</span>
+      </div>
+    </div>
+    {% endfor %}
+
+  </div>
+
+  <div class="profilo-col profilo-col--dx">
+    <p class="profilo-sezione-titolo">Questionario PCTO Azienda</p>
+    <p class="profilo-sezione-sub">Attività previste, livello richiesto e tipo di formazione</p>
+
+    {% for nome_zona, indici, colore in zone %}
+    {% set ns = namespace(pl=0,ml=0,pp=0,mp=0) %}
+    {% for i in indici %}
+      {% set p_obj = pesi|selectattr("domanda","equalto",i)|first if pesi is defined else none %}
+      {% set m = p_obj.peso if p_obj else 1.0 %}
+      {% if az["Prevista_" ~ i] %}
+        {% set lv = az["Livello_" ~ i] %}
+        {% if lv is not none %}{% set ns.pl = ns.pl + (lv * m) %}{% endif %}
+        {% set ns.ml = ns.ml + (m * 5) %}
+        {% set ns.pp = ns.pp + m %}
+      {% endif %}
+      {% set ns.mp = ns.mp + m %}
+    {% endfor %}
+    <div class="zona-domande" style="--zona-colore:{{ colore }};">
+      <div class="zona-domande__header">
+        <div class="zona-domande__dot"></div>
+        <span class="zona-domande__titolo">{{ nome_zona }}</span>
+        <span class="zona-domande__count">{{ indici|length }} attività</span>
+        <span class="zona-domande__score" style="color:{{colore}};">{{ ((ns.pp/ns.mp)*100)|round|int if ns.mp else 0 }}%</span>
+      </div>
+      <div class="zona-punteggio-totale">
+        <div class="zona-punteggio-totale__item">
+          <span class="zona-punteggio-totale__label">Livello:</span>
+          <span class="zona-punteggio-totale__val">{{ ns.pl|round(1) }}/{{ ns.ml|round(1) }}</span>
+        </div>
+        <div class="zona-punteggio-totale__item">
+          <span class="zona-punteggio-totale__label">Previste:</span>
+          <span class="zona-punteggio-totale__val">{{ ns.pp|round(1) }}/{{ ns.mp|round(1) }} peso</span>
+        </div>
+      </div>
+      {% for i in indici %}
+      {% set prevista   = az["Prevista_"   ~ i] %}
+      {% set livello    = az["Livello_"    ~ i] %}
+      {% set formazione = az["Formazione_" ~ i] %}
+      {% set p_obj = pesi|selectattr("domanda","equalto",i)|first if pesi is defined else none %}
+      {% set m = p_obj.peso if p_obj else 1.0 %}
+      <div class="profilo-domanda {% if not prevista %}profilo-domanda--inattiva{% endif %}">
+        <div class="profilo-domanda__num">{{ i }}</div>
+        <div class="profilo-domanda__testo">{{ domande[i] }}</div>
+        {% if m != 1.0 %}<div class="profilo-domanda__peso">×{{ m }}</div>{% endif %}
+        <div class="profilo-domanda__vals">
+          {% if prevista %}
+          <div class="profilo-val">
+            <span class="profilo-val__label">Liv.</span>
+            <span class="dot-v dot-v--{{ livello or 0 }}">{{ livello if livello is not none else "—" }}</span>
+          </div>
+          <div class="profilo-val">
+            <span class="profilo-val__label">Form.</span>
+            <span class="az-form-badge az-form-badge--{{ formazione or "NP" }}">{{ formazione or "—" }}</span>
+          </div>
+          {% else %}
+          <span class="profilo-domanda__np">Non prevista</span>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+
+<div style="padding:1rem 0;">
+  {% if vista_propria %}
+  <a href="{{ url_for("home") }}" class="admin-back">← Home</a>
+  {% else %}
+  <a href="{{ url_for("lista_aziende") }}" class="admin-back">← Lista Aziende</a>
+  {% endif %}
+</div>
+
+{% endif %}
+</main>
+{% endblock %}

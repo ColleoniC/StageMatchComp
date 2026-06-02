@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block titolo %}Modifica Profilo — Stage Match{% endblock %}
+{% block contenuto %}
+<main class="main">
+<p class="etichetta-sezione">Il tuo account</p>
+<h1 class="pagina-titolo">Modifica profilo</h1>
+<p class="pagina-sub">{{ q.Cognome }} {{ q.Nome }} — {{ q.Indirizzo_email }}</p>
+
+<div class="edit-card">
+  <div class="edit-card__header">
+    <div class="edit-card__avatar">S</div>
+    <div>
+      <p class="edit-card__nome">{{ q.Cognome }} {{ q.Nome }}</p>
+      <p class="edit-card__email">{{ q.Indirizzo_email }}</p>
+    </div>
+  </div>
+
+  <form method="post" action="{{ url_for('profilo_modifica_studente') }}">
+    <div class="edit-form-group">
+      <label class="edit-form-label" for="Classe">
+        Classe
+        <span class="edit-form-hint">Indica il tuo anno e sezione (es. 4AI)</span>
+      </label>
+      <input class="edit-form-input" type="text" id="Classe" name="Classe"
+             value="{{ q.Classe or '' }}" placeholder="Es. 4AI, 3BT…" maxlength="10">
+    </div>
+
+    <div class="edit-form-readonly">
+      <p class="edit-form-readonly__label">Campi non modificabili</p>
+      <p class="edit-form-readonly__sub">
+        Nome, cognome, email e risposte al questionario sono gestite dal sistema Google Forms.<br>
+        Per modificarli contatta l'amministratore.
+      </p>
+    </div>
+
+    <div class="edit-form-actions">
+      <a href="{{ url_for('profilo') }}" class="edit-btn-cancel">Annulla</a>
+      <button type="submit" class="edit-btn-save">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Salva
+      </button>
+    </div>
+  </form>
+</div>
+</main>
+{% endblock %}

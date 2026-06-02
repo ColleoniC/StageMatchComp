@@ -4,124 +4,226 @@
 {% block contenuto %}
 <main class="main profilo-main">
 
-  {% if questionario %}
+{% set domande = {
+   1:  "Office-automation (Excel, Word, Access)",
+   2:  "Software console / Windows, testing",
+   3:  "App per dispositivi mobile",
+   4:  "Software di rete e applicazioni IoT",
+   5:  "Gestione dati (database) e multimedialità",
+   6:  "Realtà virtuale / aumentata",
+   7:  "Database, procedure SQL / NoSQL",
+   8:  "Siti web statici e contenuti multimediali",
+   9:  "Siti web dinamici (web-app, API REST)",
+  10:  "Documentazione tecnica e project management",
+  11:  "Installazione e manutenzione hardware PC",
+  12:  "Configurazione software applicativi / antivirus",
+  13:  "Sistemi operativi client",
+  14:  "Sistemi operativi server",
+  15:  "Ambienti Linux e script shell",
+  16:  "Help-desk e supporto clienti software",
+  17:  "Configurazione reti TCP/IP",
+  18:  "Data-entry magazzino / contabilità",
+  19:  "Compiti di ufficio e segreteria"
+} %}
 
-  <!-- HEADER PROFILO -->
-  <div class="profilo-header">
-    <div class="profilo-header__avatar">{{ (utente.name or utente.email or '?')[0]|upper }}</div>
-    <div class="profilo-header__info">
-      <p class="profilo-header__nome">{{ questionario.Cognome }} {{ questionario.Nome }}</p>
-      <p class="profilo-header__email">{{ questionario.Indirizzo_email }}</p>
-      {% if questionario.Luogo_Di_Residenza %}
-      <p class="profilo-header__luogo">📍 {{ questionario.Luogo_Di_Residenza }}</p>
-      {% endif %}
-    </div>
-    <div class="profilo-header__badge">Studente PCTO</div>
+{% set zone = [
+  ("Sviluppo Software", [1,2,3,4,5,6], "#3b82f6"),
+  ("Web & Dati", [7,8,9,10], "#8b5cf6"),
+  ("Sistemi & Reti", [11,12,13,14,15,16,17,18,19], "#f59e0b")
+] %}
+
+{% if questionario %}
+
+{# Calcola punteggio globale per colore banner #}
+{% set ns_tot = namespace(pc=0, pi=0, mx=0) %}
+{% for _, indici, _ in zone %}
+  {% for i in indici %}
+    {% set vc = questionario["Competenza_" ~ i] %}
+    {% set vi = questionario["Interesse_" ~ i] %}
+    {% set p_obj = pesi|selectattr("domanda","equalto",i)|first if pesi is defined else none %}
+    {% set m = p_obj.peso if p_obj else 1.0 %}
+    {% if vc is not none %}{% set ns_tot.pc = ns_tot.pc + (vc * m) %}{% endif %}
+    {% if vi is not none %}{% set ns_tot.pi = ns_tot.pi + (vi * m) %}{% endif %}
+    {% set ns_tot.mx = ns_tot.mx + (m * 5) %}
+  {% endfor %}
+{% endfor %}
+{% set score_globale = (((ns_tot.pc + ns_tot.pi) / (ns_tot.mx * 2)) * 100)|round|int if ns_tot.mx > 0 else 0 %}
+
+{% if score_globale >= 80 %}{% set banner_cls = "banner--eccellente" %}
+{% elif score_globale >= 60 %}{% set banner_cls = "banner--ottimo" %}
+{% elif score_globale >= 40 %}{% set banner_cls = "banner--buono" %}
+{% elif score_globale >= 20 %}{% set banner_cls = "banner--base" %}
+{% else %}{% set banner_cls = "banner--minimo" %}{% endif %}
+
+<div class="profilo-banner {{ banner_cls }}">
+  <div class="profilo-banner__avatar profilo-avatar--studente">S</div>
+  <div class="profilo-banner__info">
+    <p class="profilo-banner__nome">{{ questionario.Cognome }} {{ questionario.Nome }}</p>
+    <p class="profilo-banner__email">{{ questionario.Indirizzo_email }}</p>
+    {% if questionario.Classe %}
+    <p class="profilo-banner__dettaglio">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      Classe {{ questionario.Classe }}
+    </p>
+    {% endif %}
   </div>
+  <div class="profilo-banner__azioni">
+    <div class="profilo-banner__badge">Studente PCTO</div>
+    <div class="profilo-banner__score">{{ score_globale }}%</div>
+    <a href="{{ url_for("profilo_modifica_studente") }}" class="btn-modifica-profilo">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Modifica
+    </a>
+    <a href="{{ url_for('match') }}" class="btn-match-profilo">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      Match
+    </a>
+  </div>
+</div>
 
-  <!-- LAYOUT DUE COLONNE -->
-  <div class="profilo-layout">
+<div class="profilo-layout">
 
-    <!-- COLONNA SX: dati anagrafici -->
-    <div class="profilo-col profilo-col--anagrafica">
-      <p class="profilo-sezione-titolo">Dati anagrafici</p>
-      <div class="profilo-anagrafica">
-        <div class="profilo-anagrafica__riga">
-          <span class="profilo-anagrafica__label">Nome</span>
-          <span class="profilo-anagrafica__val">{{ questionario.Nome or '—' }}</span>
+  <div class="profilo-col profilo-col--sx">
+
+    <p class="profilo-sezione-titolo">Dati anagrafici</p>
+    <div class="profilo-anagrafica">
+      <div class="profilo-anagrafica__riga"><span class="profilo-anagrafica__label">Nome</span><span class="profilo-anagrafica__val">{{ questionario.Nome or "—" }}</span></div>
+      <div class="profilo-anagrafica__riga"><span class="profilo-anagrafica__label">Cognome</span><span class="profilo-anagrafica__val">{{ questionario.Cognome or "—" }}</span></div>
+      <div class="profilo-anagrafica__riga"><span class="profilo-anagrafica__label">Email</span><span class="profilo-anagrafica__val" style="word-break:break-all;font-size:.78rem;">{{ questionario.Indirizzo_email or "—" }}</span></div>
+      <div class="profilo-anagrafica__riga"><span class="profilo-anagrafica__label">Classe</span><span class="profilo-anagrafica__val">{{ questionario.Classe or "—" }}</span></div>
+    </div>
+
+    <p class="profilo-sezione-titolo" style="margin-top:1.5rem;">Legenda valori</p>
+    <div class="profilo-legenda">
+      {% for v, label, colore in [(1,"Molto basso","#ef4444"),(2,"Basso","#f97316"),(3,"Medio","#eab308"),(4,"Alto","#22c55e"),(5,"Molto alto","#3b82f6")] %}
+      <div class="profilo-legenda__item">
+        <span class="dot-v dot-v--{{v}}">{{v}}</span>
+        <span>{{label}}</span>
+      </div>
+      {% endfor %}
+    </div>
+
+    <p class="profilo-sezione-titolo" style="margin-top:1.75rem;">Analisi per area</p>
+
+    {% for nome_zona, indici, colore in zone %}
+    {% set ns = namespace(pc=0, pi=0, mx=0) %}
+    {% for i in indici %}
+      {% set vc = questionario["Competenza_" ~ i] %}
+      {% set vi = questionario["Interesse_"  ~ i] %}
+      {% set p_obj = pesi|selectattr("domanda","equalto",i)|first if pesi is defined else none %}
+      {% set m = p_obj.peso if p_obj else 1.0 %}
+      {% if vc is not none %}{% set ns.pc = ns.pc + (vc * m) %}{% endif %}
+      {% if vi is not none %}{% set ns.pi = ns.pi + (vi * m) %}{% endif %}
+      {% set ns.mx = ns.mx + (m * 5) %}
+    {% endfor %}
+    {% set pct_c = ((ns.pc / ns.mx)*100)|round|int if ns.mx > 0 else 0 %}
+    {% set pct_i = ((ns.pi / ns.mx)*100)|round|int if ns.mx > 0 else 0 %}
+
+    <div class="scorecard" style="--sc-color:{{ colore }};">
+      <div class="scorecard__header">
+        <div class="scorecard__dot"></div>
+        <span class="scorecard__nome">{{ nome_zona }}</span>
+        <span class="scorecard__pct-big">{{ ((pct_c + pct_i)//2) }}%</span>
+      </div>
+      <div class="scorecard__bars">
+        <div class="scorecard__bar-row">
+          <span class="scorecard__bar-label">Competenza</span>
+          <div class="scorecard__track"><div class="scorecard__fill" style="width:{{pct_c}}%;background:{{colore}};"></div></div>
+          <span class="scorecard__pct">{{pct_c}}%</span>
         </div>
-        <div class="profilo-anagrafica__riga">
-          <span class="profilo-anagrafica__label">Cognome</span>
-          <span class="profilo-anagrafica__val">{{ questionario.Cognome or '—' }}</span>
-        </div>
-        <div class="profilo-anagrafica__riga">
-          <span class="profilo-anagrafica__label">Email</span>
-          <span class="profilo-anagrafica__val" style="word-break:break-all;">{{ questionario.Indirizzo_email or '—' }}</span>
-        </div>
-        <div class="profilo-anagrafica__riga">
-          <span class="profilo-anagrafica__label">Residenza</span>
-          <span class="profilo-anagrafica__val">{{ questionario.Luogo_Di_Residenza or '—' }}</span>
+        <div class="scorecard__bar-row">
+          <span class="scorecard__bar-label">Interesse</span>
+          <div class="scorecard__track"><div class="scorecard__fill" style="width:{{pct_i}}%;background:{{colore}};opacity:.65;"></div></div>
+          <span class="scorecard__pct">{{pct_i}}%</span>
         </div>
       </div>
+      <div class="scorecard__punti">
+        <span>C: {{ ns.pc|round(1) }}/{{ ns.mx|round(1) }}</span>
+        <span>I: {{ ns.pi|round(1) }}/{{ ns.mx|round(1) }}</span>
+      </div>
+    </div>
+    {% endfor %}
 
-      <div class="profilo-legenda">
-        <p class="profilo-sezione-titolo" style="margin-top:1.5rem;">Legenda valutazioni</p>
-        <div class="profilo-legenda__griglia">
-          {% for v, label in [('1','Molto basso'),('2','Basso'),('3','Medio'),('4','Alto'),('5','Molto alto')] %}
-          <div class="profilo-legenda__item">
-            <span class="profilo-dot profilo-dot--{{ v }}">{{ v }}</span>
-            <span>{{ label }}</span>
+  </div>
+
+  <div class="profilo-col profilo-col--dx">
+    <p class="profilo-sezione-titolo">Questionario PCTO</p>
+    <p class="profilo-sezione-sub">Interesse e competenza dichiarati per ciascuna attività</p>
+
+    {% for nome_zona, indici, colore in zone %}
+    {% set ns = namespace(pc=0,pi=0,mx=0) %}
+    {% for i in indici %}
+      {% set vi = questionario["Interesse_"  ~ i] %}
+      {% set vc = questionario["Competenza_" ~ i] %}
+      {% set p_obj = pesi|selectattr("domanda","equalto",i)|first if pesi is defined else none %}
+      {% set m = p_obj.peso if p_obj else 1.0 %}
+      {% if vi is not none %}{% set ns.pi = ns.pi + (vi * m) %}{% endif %}
+      {% if vc is not none %}{% set ns.pc = ns.pc + (vc * m) %}{% endif %}
+      {% set ns.mx = ns.mx + (m * 5) %}
+    {% endfor %}
+
+    <div class="zona-domande" style="--zona-colore:{{ colore }};">
+      <div class="zona-domande__header">
+        <div class="zona-domande__dot"></div>
+        <span class="zona-domande__titolo">{{ nome_zona }}</span>
+        <span class="zona-domande__count">{{ indici|length }} attività</span>
+        <span class="zona-domande__score" style="color:{{colore}};">
+          {{ ((((ns.pc/ns.mx if ns.mx else 0) + (ns.pi/ns.mx if ns.mx else 0))/2)*100)|round|int }}%
+        </span>
+      </div>
+      <div class="zona-punteggio-totale">
+        <div class="zona-punteggio-totale__item">
+          <span class="zona-punteggio-totale__label">Competenza:</span>
+          <span class="zona-punteggio-totale__val">{{ ns.pc|round(1) }}/{{ ns.mx|round(1) }}</span>
+        </div>
+        <div class="zona-punteggio-totale__item">
+          <span class="zona-punteggio-totale__label">Interesse:</span>
+          <span class="zona-punteggio-totale__val">{{ ns.pi|round(1) }}/{{ ns.mx|round(1) }}</span>
+        </div>
+      </div>
+      {% for i in indici %}
+      {% set interesse  = questionario["Interesse_"  ~ i] %}
+      {% set competenza = questionario["Competenza_" ~ i] %}
+      {% set p_obj = pesi|selectattr("domanda","equalto",i)|first if pesi is defined else none %}
+      {% set m = p_obj.peso if p_obj else 1.0 %}
+      <div class="profilo-domanda">
+        <div class="profilo-domanda__num">{{ i }}</div>
+        <div class="profilo-domanda__testo">{{ domande[i] }}</div>
+        {% if m != 1.0 %}<div class="profilo-domanda__peso">×{{ m }}</div>{% endif %}
+        <div class="profilo-domanda__vals">
+          <div class="profilo-val">
+            <span class="profilo-val__label">Int.</span>
+            <span class="dot-v dot-v--{{ interesse or 0 }}">{{ interesse if interesse is not none else "—" }}</span>
           </div>
-          {% endfor %}
-        </div>
-      </div>
-    </div>
-
-    <!-- COLONNA DX: domande con valutazioni -->
-    <div class="profilo-col profilo-col--questionario">
-      <p class="profilo-sezione-titolo">Questionario PCTO</p>
-      <p class="profilo-sezione-sub">Interesse e competenza dichiarati per ciascuna attività</p>
-
-      {% set domande = {
-         1:  "Sviluppare soluzioni con software di office-automation (Excel, Word, Access)",
-         2:  "Sviluppare software in ambiente console e/o Windows, testing",
-         3:  "Sviluppare app per dispositivi mobile",
-         4:  "Sviluppare software di rete e applicazioni IoT",
-         5:  "Sviluppare software per gestione dati (database) e multimedialità",
-         6:  "Sviluppare software di realtà virtuale / aumentata",
-         7:  "Gestire database, procedure SQL / NoSQL",
-         8:  "Realizzare siti web statici e contenuti multimediali",
-         9:  "Realizzare siti web dinamici (web-app, API REST)",
-        10:  "Realizzare documentazione tecnica e organizzazione del progetto",
-        11:  "Installare e manutenere hardware PC",
-        12:  "Installare e configurare software applicativi e antivirus",
-        13:  "Installare e configurare sistemi operativi client",
-        14:  "Installare e configurare sistemi operativi server",
-        15:  "Gestire ambienti Linux e script shell",
-        16:  "Help-desk e supporto clienti software",
-        17:  "Configurazione reti TCP/IP",
-        18:  "Data-entry su software di magazzino / contabilità",
-        19:  "Compiti di ufficio e segreteria"
-      } %}
-
-      <div class="profilo-domande">
-        {% for i in range(1, 20) %}
-        {% set interesse  = questionario['Interesse_'  ~ i] %}
-        {% set competenza = questionario['Competenza_' ~ i] %}
-        <div class="profilo-domanda">
-          <div class="profilo-domanda__num">{{ i }}</div>
-          <div class="profilo-domanda__testo">{{ domande[i] }}</div>
-          <div class="profilo-domanda__vals">
-            <div class="profilo-val">
-              <span class="profilo-val__label">Interesse</span>
-              <span class="profilo-dot profilo-dot--{{ interesse or 0 }}">{{ interesse if interesse is not none else '—' }}</span>
-            </div>
-            <div class="profilo-val">
-              <span class="profilo-val__label">Competenza</span>
-              <span class="profilo-dot profilo-dot--{{ competenza or 0 }}">{{ competenza if competenza is not none else '—' }}</span>
-            </div>
+          <div class="profilo-val">
+            <span class="profilo-val__label">Comp.</span>
+            <span class="dot-v dot-v--{{ competenza or 0 }}">{{ competenza if competenza is not none else "—" }}</span>
           </div>
         </div>
-        {% endfor %}
       </div>
+      {% endfor %}
     </div>
-
+    {% endfor %}
   </div>
 
-  {% else %}
-  <div class="profilo-header">
-    <div class="profilo-header__avatar">{{ (utente.email or '?')[0]|upper }}</div>
-    <div class="profilo-header__info">
-      <p class="profilo-header__nome">{{ utente.name or utente.email }}</p>
-      <p class="profilo-header__email">{{ utente.email }}</p>
-    </div>
+</div>
+
+{% else %}
+<div class="profilo-banner banner--minimo">
+  <div class="profilo-banner__avatar profilo-avatar--studente">S</div>
+  <div class="profilo-banner__info">
+    <p class="profilo-banner__nome">{{ utente.name or utente.email }}</p>
+    <p class="profilo-banner__email">{{ utente.email }}</p>
   </div>
-  <div class="profilo-vuoto">
-    <p class="profilo-vuoto__titolo">Questionario non trovato</p>
-    <p>Nessun dato PCTO associato a <strong>{{ utente.email }}</strong>.<br>
-    Verifica di aver compilato il modulo con la stessa email.</p>
-  </div>
-  {% endif %}
+  <div class="profilo-banner__badge">Studente PCTO</div>
+</div>
+<div class="profilo-vuoto">
+  <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+  <p class="profilo-vuoto__titolo">Questionario non trovato</p>
+  <p>Nessun dato PCTO associato a <strong>{{ utente.email }}</strong>.</p>
+  <button onclick="apriSondaggio()" class="btn-sondaggio-vuoto">Compila il sondaggio PCTO</button>
+</div>
+{% endif %}
 
 </main>
 {% endblock %}

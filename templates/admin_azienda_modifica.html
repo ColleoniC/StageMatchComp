@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block titolo %}Modifica Azienda — Admin{% endblock %}
+{% block contenuto %}
+<main class="main">
+
+{% set domande = {1:"Office-automation",2:"Software console",3:"App mobile",4:"Reti/IoT",5:"Database/multimedialità",6:"VR/AR",7:"Database SQL/NoSQL",8:"Siti statici",9:"Siti dinamici/API",10:"Documentazione/PM",11:"Hardware PC",12:"Software/antivirus",13:"OS client",14:"OS server",15:"Linux/shell",16:"Help-desk",17:"Reti TCP/IP",18:"Data-entry",19:"Segreteria"} %}
+
+<div style="margin-bottom:1.25rem;">
+  <p class="etichetta-sezione">Admin → Aziende</p>
+  <h1 class="pagina-titolo">Modifica azienda</h1>
+  <p class="pagina-sub">{{ az.Azienda }} — #{{ az.id }}</p>
+</div>
+
+<form method="post" action="{{ url_for('admin_azienda_modifica', id=az.id) }}">
+  <div class="modifica-card">
+    <div class="modifica-card__header">Dati azienda</div>
+    <div class="modifica-griglia modifica-griglia--2">
+      <div class="modifica-campo"><label>Nome azienda</label><input type="text" name="Azienda" value="{{ az.Azienda or '' }}"></div>
+      <div class="modifica-campo"><label>Descrizione (max 500 car.)</label><input type="text" name="Descrizione" value="{{ az.Descrizione or '' }}" maxlength="500"></div>
+    </div>
+  </div>
+
+  <div class="modifica-card">
+    <div class="modifica-card__header">Attività PCTO</div>
+    <div class="modifica-val-griglia modifica-val-griglia--az">
+      <span class="modifica-val-griglia__hdr modifica-val-griglia__hdr--num">#</span>
+      <span class="modifica-val-griglia__hdr">Attività</span>
+      <span class="modifica-val-griglia__hdr modifica-val-griglia__hdr--center">Prevista</span>
+      <span class="modifica-val-griglia__hdr modifica-val-griglia__hdr--center">Livello (1-3)</span>
+      <span class="modifica-val-griglia__hdr modifica-val-griglia__hdr--center">Formazione</span>
+      {% for i in range(1,20) %}
+      <span class="modifica-val-griglia__num">{{ i }}</span>
+      <span class="modifica-val-griglia__nome">{{ domande[i] }}</span>
+      <div class="modifica-val-griglia__input-wrap">
+        <input type="checkbox" name="Prevista_{{ i }}" {% if az["Prevista_"~i] %}checked{% endif %} style="width:18px;height:18px;cursor:pointer;accent-color:var(--accent);">
+      </div>
+      <div class="modifica-val-griglia__input-wrap">
+        <input type="number" class="modifica-num-input" name="Livello_{{ i }}" min="1" max="3" value="{{ az['Livello_'~i] or '' }}" placeholder="—" style="width:60px;">
+      </div>
+      <div class="modifica-val-griglia__input-wrap">
+        <select name="Formazione_{{ i }}" style="padding:.28rem .4rem;border-radius:6px;border:1.5px solid var(--bordo);font-size:.76rem;background:var(--card-bg);color:var(--testo-scuro);outline:none;">
+          <option value="">—</option>
+          <option value="NP" {% if az["Formazione_"~i]=="NP" %}selected{% endif %}>NP</option>
+          <option value="B"  {% if az["Formazione_"~i]=="B"  %}selected{% endif %}>B</option>
+          <option value="C"  {% if az["Formazione_"~i]=="C"  %}selected{% endif %}>C</option>
+          <option value="F"  {% if az["Formazione_"~i]=="F"  %}selected{% endif %}>F</option>
+        </select>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="modifica-footer">
+    <a href="{{ url_for('admin_azienda_profilo', id=az.id) }}" class="admin-back">Annulla</a>
+    <button type="submit" class="admin-btn-salva">Salva modifiche</button>
+  </div>
+</form>
+</main>
+{% endblock %}

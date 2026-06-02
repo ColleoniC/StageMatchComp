@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block titolo %}Modifica Profilo Azienda — Stage Match{% endblock %}
+{% block contenuto %}
+<main class="main">
+<p class="etichetta-sezione">Il tuo account</p>
+<h1 class="pagina-titolo">Modifica profilo azienda</h1>
+<p class="pagina-sub">{{ az.Azienda }}</p>
+
+<div class="edit-card">
+  <div class="edit-card__header">
+    <div class="edit-card__avatar" style="background:linear-gradient(145deg,#10b981,#059669);">A</div>
+    <div>
+      <p class="edit-card__nome">{{ az.Azienda }}</p>
+      <p class="edit-card__email">{{ az.Email or 'Email non impostata' }}</p>
+    </div>
+  </div>
+
+  <form method="post" action="{{ url_for('profilo_modifica_azienda') }}">
+    <div class="edit-form-group">
+      <label class="edit-form-label" for="Email">
+        Email aziendale
+        <span class="edit-form-hint">Usata per l'accesso al portale</span>
+      </label>
+      <input class="edit-form-input" type="email" id="Email" name="Email"
+             value="{{ az.Email or '' }}" placeholder="info@azienda.it">
+    </div>
+
+    <div class="edit-form-group">
+      <label class="edit-form-label" for="Descrizione">
+        Descrizione azienda
+        <span class="edit-form-hint">Breve descrizione (max 500 caratteri), visibile agli studenti</span>
+      </label>
+      <textarea class="edit-form-input edit-form-textarea" id="Descrizione" name="Descrizione"
+                maxlength="500" oninput="aggiornaContatore(this)"
+                placeholder="Descrivi l'azienda, il settore e le attività principali…">{{ az.Descrizione or '' }}</textarea>
+      <span class="edit-form-counter" id="contatoreDescr">{{ (az.Descrizione or '')|length }}/500 caratteri</span>
+    </div>
+
+    <div class="edit-form-readonly">
+      <p class="edit-form-readonly__label">Campi non modificabili</p>
+      <p class="edit-form-readonly__sub">
+        Il nome azienda e le risposte al questionario PCTO sono gestite dal sistema Google Forms.<br>
+        Per modificarli contatta l'amministratore.
+      </p>
+    </div>
+
+    <div class="edit-form-actions">
+      <a href="{{ url_for('profilo') }}" class="edit-btn-cancel">Annulla</a>
+      <button type="submit" class="edit-btn-save">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Salva
+      </button>
+    </div>
+  </form>
+</div>
+</main>
+{% endblock %}
+
+{% block script %}
+<script>
+function aggiornaContatore(el) {
+  const c = document.getElementById('contatoreDescr');
+  if (c) c.textContent = el.value.length + '/500 caratteri';
+}
+</script>
+{% endblock %}

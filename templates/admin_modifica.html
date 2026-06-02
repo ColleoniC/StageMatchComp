@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block titolo %}Modifica Studente — Admin{% endblock %}
+{% block contenuto %}
+<main class="main">
+
+{% set domande = {1:"Office-automation",2:"Software console",3:"App mobile",4:"Reti/IoT",5:"Database/multimedialità",6:"VR/AR",7:"Database SQL/NoSQL",8:"Siti statici",9:"Siti dinamici/API",10:"Documentazione/PM",11:"Hardware PC",12:"Software/antivirus",13:"OS client",14:"OS server",15:"Linux/shell",16:"Help-desk",17:"Reti TCP/IP",18:"Data-entry",19:"Segreteria"} %}
+
+<div style="margin-bottom:1.25rem;">
+  <p class="etichetta-sezione">Admin → Studenti</p>
+  <h1 class="pagina-titolo">Modifica profilo</h1>
+  <p class="pagina-sub">{{ q.Cognome }} {{ q.Nome }} — #{{ q.id }}</p>
+</div>
+
+<form method="post" action="{{ url_for('admin_modifica', id=q.id) }}">
+
+  <div class="modifica-card">
+    <div class="modifica-card__header">Dati anagrafici</div>
+    <div class="modifica-griglia modifica-griglia--2">
+      <div class="modifica-campo"><label>Nome</label><input type="text" name="Nome" value="{{ q.Nome or '' }}"></div>
+      <div class="modifica-campo"><label>Cognome</label><input type="text" name="Cognome" value="{{ q.Cognome or '' }}"></div>
+      <div class="modifica-campo"><label>Email</label><input type="email" name="Indirizzo_email" value="{{ q.Indirizzo_email or '' }}"></div>
+      <div class="modifica-campo"><label>Classe</label><input type="text" name="Classe" value="{{ q.Classe or '' }}" placeholder="Es. 4AI"></div>
+    </div>
+  </div>
+
+  <div class="modifica-card">
+    <div class="modifica-card__header">Risposte questionario (1–5)</div>
+    <div class="modifica-val-griglia">
+      <span class="modifica-val-griglia__hdr modifica-val-griglia__hdr--num">#</span>
+      <span class="modifica-val-griglia__hdr">Attività</span>
+      <span class="modifica-val-griglia__hdr modifica-val-griglia__hdr--center">Interesse</span>
+      <span class="modifica-val-griglia__hdr modifica-val-griglia__hdr--center">Competenza</span>
+      {% for i in range(1,20) %}
+      <span class="modifica-val-griglia__num">{{ i }}</span>
+      <span class="modifica-val-griglia__nome">{{ domande[i] }}</span>
+      <div class="modifica-val-griglia__input-wrap">
+        <input type="number" class="modifica-num-input" name="Interesse_{{ i }}" min="1" max="5" value="{{ q['Interesse_'~i] or '' }}" placeholder="—">
+      </div>
+      <div class="modifica-val-griglia__input-wrap">
+        <input type="number" class="modifica-num-input" name="Competenza_{{ i }}" min="1" max="5" value="{{ q['Competenza_'~i] or '' }}" placeholder="—">
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="modifica-footer">
+    <a href="{{ url_for('admin_profilo', id=q.id) }}" class="admin-back">Annulla</a>
+    <button type="submit" class="admin-btn-salva">Salva modifiche</button>
+  </div>
+
+</form>
+</main>
+{% endblock %}

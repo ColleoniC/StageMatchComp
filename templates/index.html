@@ -6,114 +6,188 @@
   <div class="hero__overlay"></div>
   <div class="hero__testo">
     <h1>Benvenuto su Stage Match<br>ITIS Pietro Paleocapa</h1>
-    <p>Il portale dedicato agli stage e al PCTO per studenti e aziende partner</p>
+    <p>Il portale PCTO che abbina studenti e aziende in modo intelligente</p>
+    <a href="#progetto" class="hero__cta">Scopri di più ↓</a>
   </div>
 </section>
 
-<main class="main">
-
-  <!-- DESCRIZIONE PROGETTO -->
-  <section class="progetto-desc">
-    <div class="progetto-desc__badge">Progetto PCTO 2026</div>
-    <h2 class="progetto-desc__titolo">Trova lo stage più adatto a te</h2>
-    <p class="progetto-desc__testo">
+<section class="home-section home-section--light" id="progetto">
+  <div class="home-section__inner">
+    <p class="etichetta-sezione">Il progetto</p>
+    <h2 class="home-section__titolo">Trova lo stage più adatto a te</h2>
+    <p class="home-section__testo">
       <strong>Stage Match</strong> è un'applicazione web sviluppata dagli studenti dell'ITIS Pietro Paleocapa
       per semplificare l'abbinamento tra studenti e aziende nello stage FSL estivo.
-      Ogni studente compila un questionario su competenze e interessi: un algoritmo analizza i dati
-      e suggerisce le aziende più compatibili, tenendo conto anche della vicinanza geografica.
+      Il sistema analizza i dati del questionario e suggerisce le aziende più compatibili.
     </p>
-    <div class="progetto-features">
-      <div class="progetto-feature">
-        <span class="progetto-feature__icona">📋</span>
-        <div>
-          <p class="progetto-feature__titolo">Questionario personalizzato</p>
-          <p class="progetto-feature__testo">Valuta le tue competenze e i tuoi interessi una volta sola</p>
-        </div>
-      </div>
-      <div class="progetto-feature">
-        <span class="progetto-feature__icona">🤝</span>
-        <div>
-          <p class="progetto-feature__titolo">Abbinamento intelligente</p>
-          <p class="progetto-feature__testo">L'algoritmo analizza affinità, competenze e vicinanza</p>
-        </div>
-      </div>
-      <div class="progetto-feature">
-        <span class="progetto-feature__icona">👤</span>
-        <div>
-          <p class="progetto-feature__titolo">Profili dedicati</p>
-          <p class="progetto-feature__testo">Studente, azienda e admin con accessi e viste differenziati</p>
-        </div>
-      </div>
-      <div class="progetto-feature">
-        <span class="progetto-feature__icona">🏢</span>
-        <div>
-          <p class="progetto-feature__titolo">Database aziende</p>
-          <p class="progetto-feature__testo">Ogni azienda partner ha un profilo con le proprie esigenze</p>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <hr class="divisore">
-
-  <!-- SERVIZI DISPONIBILI -->
-  <p class="etichetta-sezione">Servizi disponibili</p>
-  <div class="servizi-lista">
-
-    <div class="servizio-row">
-      <div class="servizio-row__sinistra">
-        <div class="servizio-row__icona-wrap">
-          <svg viewBox="0 0 24 24"><path d="M3 9.75L12 3l9 6.75V21a1 1 0 01-1 1H4a1 1 0 01-1-1V9.75z"/><path d="M9 22V12h6v10"/></svg>
+    <div class="info-icons">
+      <button class="info-icon-btn" onclick="toggleInfo('i1')">
+        <div class="info-icon-btn__cerchio">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
         </div>
-        <div>
-          <p class="servizio-row__nome">Home</p>
-          <p class="servizio-row__badge servizio-row__badge--attivo">Disponibile</p>
+        <span>Questionario</span>
+      </button>
+      <button class="info-icon-btn" onclick="toggleInfo('i2')">
+        <div class="info-icon-btn__cerchio">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
         </div>
-      </div>
-      <p class="servizio-row__desc">Pagina principale del portale. Panoramica del progetto e accesso rapido a tutte le sezioni.</p>
+        <span>Abbinamento</span>
+      </button>
+      <button class="info-icon-btn" onclick="toggleInfo('i3')">
+        <div class="info-icon-btn__cerchio">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <span>Ruoli</span>
+      </button>
+      <button class="info-icon-btn" onclick="toggleInfo('i4')">
+        <div class="info-icon-btn__cerchio">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <span>Come iniziare</span>
+      </button>
+      <button class="info-icon-btn" onclick="toggleInfo('i5')">
+        <div class="info-icon-btn__cerchio">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <span>Algoritmo</span>
+      </button>
+      <button class="info-icon-btn" onclick="toggleInfo('i6')">
+        <div class="info-icon-btn__cerchio">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <span>Privacy</span>
+      </button>
     </div>
 
-    <div class="servizio-row">
-      <div class="servizio-row__sinistra">
-        <div class="servizio-row__icona-wrap">
-          <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="15" rx="1.5"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="17"/><line x1="9.5" y1="14.5" x2="14.5" y2="14.5"/></svg>
-        </div>
-        <div>
-          <p class="servizio-row__nome">Lista Aziende</p>
-          <p class="servizio-row__badge servizio-row__badge--attivo">Disponibile</p>
-        </div>
-      </div>
-      <p class="servizio-row__desc">Consulta le aziende partner dell'istituto che partecipano al programma di stage FSL estivo.</p>
+    <div class="info-panel" id="i1">
+      <p class="info-panel__titolo">Il questionario</p>
+      <p>Ogni studente risponde a 19 domande su competenze tecniche e interessi, su scala 1–5. Le risposte vengono sincronizzate automaticamente dal foglio Google e salvate nel database locale.</p>
     </div>
-
-    <div class="servizio-row">
-      <div class="servizio-row__sinistra">
-        <div class="servizio-row__icona-wrap">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.58-7 8-7s8 3 8 7"/></svg>
-        </div>
-        <div>
-          <p class="servizio-row__nome">Profilo Studente</p>
-          <p class="servizio-row__badge servizio-row__badge--login">Richiede login</p>
-        </div>
-      </div>
-      <p class="servizio-row__desc">Visualizza il tuo profilo con i dati del questionario PCTO compilato, interessi e competenze registrate.</p>
+    <div class="info-panel" id="i2">
+      <p class="info-panel__titolo">Come funziona l'abbinamento</p>
+      <p>L'algoritmo confronta i punteggi ponderati dello studente con quelli delle aziende. Ogni domanda ha un peso configurabile dall'admin — il peso moltiplicato per il valore dato dallo studente determina il punteggio finale per quell'area.</p>
     </div>
-
-    <div class="servizio-row">
-      <div class="servizio-row__sinistra">
-        <div class="servizio-row__icona-wrap">
-          <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
-        </div>
-        <div>
-          <p class="servizio-row__nome">Mappa Sede</p>
-          <p class="servizio-row__badge servizio-row__badge--attivo">Disponibile</p>
-        </div>
-      </div>
-      <p class="servizio-row__desc">Posizione dell'ITIS Pietro Paleocapa su mappa interattiva. Via Gavazzeni 29, Bergamo.</p>
+    <div class="info-panel" id="i3">
+      <p class="info-panel__titolo">Ruoli nel sistema</p>
+      <p><strong>Studente</strong> — compila il questionario, visualizza il profilo e i grafici di analisi. <strong>Azienda</strong> — inserisce i propri requisiti e consulta i candidati suggeriti. <strong>Admin</strong> — gestisce l'intero sistema: profili, pesi, accessi.</p>
     </div>
-
+    <div class="info-panel" id="i4">
+      <p class="info-panel__titolo">Come iniziare</p>
+      <p>Clicca su <strong>Login</strong> in alto a destra e seleziona il ruolo. Se hai già compilato il questionario Google con la tua email scolastica, il profilo è automaticamente disponibile nel sistema. Nessuna registrazione manuale necessaria.</p>
+    </div>
+    <div class="info-panel" id="i5">
+      <p class="info-panel__titolo">Come funziona l'algoritmo di pesi</p>
+      <p>Ogni domanda del questionario ha un peso (configurabile da 0.1 a 5.0). Il punteggio finale per ogni area è la media ponderata: <em>Σ(risposta × peso) / Σ(peso × 5)</em> × 100%. L'admin può cambiare i pesi in tempo reale dal pannello di gestione.</p>
+    </div>
+    <div class="info-panel" id="i6">
+      <p class="info-panel__titolo">Dati e privacy</p>
+      <p>I dati vengono letti dal foglio Google tramite Service Account e salvati in un database locale SQLite. L'accesso ai profili è protetto da autenticazione SSO con token JWT. Nessun dato viene condiviso con terze parti.</p>
+    </div>
   </div>
+</section>
 
-  <hr class="divisore">
-</main>
+<section class="home-section home-section--mid" id="servizi">
+  <div class="home-section__inner">
+    <p class="etichetta-sezione">Servizi disponibili</p>
+    <h2 class="home-section__titolo">Cosa puoi fare</h2>
+    <div class="servizi-lista">
+
+      <div class="servizio-row">
+        <div class="servizio-row__sinistra">
+          <div class="servizio-row__icona-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.75L12 3l9 6.75V21a1 1 0 01-1 1H4a1 1 0 01-1-1V9.75z"/><path d="M9 22V12h6v10"/></svg>
+          </div>
+          <div><p class="servizio-row__nome">Home</p><p class="servizio-row__badge servizio-row__badge--attivo">Disponibile</p></div>
+        </div>
+        <p class="servizio-row__desc">Panoramica del progetto, schede informative espandibili e accesso rapido a tutte le sezioni.</p>
+      </div>
+
+      <div class="servizio-row">
+        <div class="servizio-row__sinistra">
+          <div class="servizio-row__icona-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+          </div>
+          <div><p class="servizio-row__nome">Lista Aziende</p><p class="servizio-row__badge servizio-row__badge--attivo">Disponibile</p></div>
+        </div>
+        <p class="servizio-row__desc">Consulta le aziende partner che partecipano al programma di stage FSL estivo.</p>
+      </div>
+
+      <div class="servizio-row">
+        <div class="servizio-row__sinistra">
+          <div class="servizio-row__icona-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.58-7 8-7s8 3 8 7"/></svg>
+          </div>
+          <div><p class="servizio-row__nome">Profilo Studente</p><p class="servizio-row__badge servizio-row__badge--login">Richiede login</p></div>
+        </div>
+        <p class="servizio-row__desc">Profilo personale con questionario PCTO, grafici ponderati per area e analisi di competenze e interessi.</p>
+      </div>
+
+      <div class="servizio-row">
+        <div class="servizio-row__sinistra">
+          <div class="servizio-row__icona-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          </div>
+          <div><p class="servizio-row__nome">Match Studente</p><p class="servizio-row__badge servizio-row__badge--login">Richiede login</p></div>
+        </div>
+        <p class="servizio-row__desc">Scopri le aziende più compatibili con il tuo profilo PCTO tramite il nostro algoritmo di abbinamento con analisi AI.</p>
+      </div>
+
+      <div class="servizio-row">
+        <div class="servizio-row__sinistra">
+          <div class="servizio-row__icona-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/><circle cx="12" cy="14" r="2"/></svg>
+          </div>
+          <div><p class="servizio-row__nome">Match Azienda</p><p class="servizio-row__badge servizio-row__badge--login">Richiede login</p></div>
+        </div>
+        <p class="servizio-row__desc">Area riservata alle aziende: visualizza i candidati più compatibili con il profilo aziendale e i requisiti PCTO.</p>
+      </div>
+
+      <div class="servizio-row">
+        <div class="servizio-row__sinistra">
+          <div class="servizio-row__icona-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          </div>
+          <div><p class="servizio-row__nome">Pannello Admin</p><p class="servizio-row__badge" style="background:rgba(239,68,68,.12);color:#b91c1c;border:1px solid rgba(239,68,68,.25);">Solo admin</p></div>
+        </div>
+        <p class="servizio-row__desc">Gestione completa: visualizza e modifica profili studenti, configura i pesi dell'algoritmo, elimina record, accede a tutti i questionari.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="home-section home-section--dark" id="tech">
+  <div class="home-section__inner">
+    <p class="etichetta-sezione" style="color:rgba(255,255,255,.4);">Sotto il cofano</p>
+    <h2 class="home-section__titolo" style="color:#fff;">Tecnologie utilizzate</h2>
+    <p class="home-section__testo">Stack scelto dagli studenti per semplicità, affidabilità e compatibilità con l'infrastruttura scolastica.</p>
+    <div class="tech-griglia">
+      <div class="tech-item"><span class="tech-item__nome">Python / Flask</span><span class="tech-item__desc">Backend e routing</span></div>
+      <div class="tech-item"><span class="tech-item__nome">SQLAlchemy + SQLite</span><span class="tech-item__desc">Database locale</span></div>
+      <div class="tech-item"><span class="tech-item__nome">Google Sheets API</span><span class="tech-item__desc">Fonte dati questionari</span></div>
+      <div class="tech-item"><span class="tech-item__nome">JWT / SSO</span><span class="tech-item__desc">Autenticazione sicura</span></div>
+      <div class="tech-item"><span class="tech-item__nome">HTML / CSS / JS</span><span class="tech-item__desc">Frontend vanilla</span></div>
+      <div class="tech-item"><span class="tech-item__nome">Ollama / OpenAI API</span><span class="tech-item__desc">Analisi AI match</span></div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block script %}
+<script>
+function toggleInfo(id) {
+  const panel = document.getElementById(id);
+  const eraAperto = panel.classList.contains('aperto');
+  document.querySelectorAll('.info-panel').forEach(p => p.classList.remove('aperto'));
+  document.querySelectorAll('.info-icon-btn').forEach(b => b.classList.remove('attivo'));
+  if (!eraAperto) {
+    panel.classList.add('aperto');
+    const btn = document.querySelector(`[onclick="toggleInfo('${id}')"]`);
+    if (btn) btn.classList.add('attivo');
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+</script>
 {% endblock %}

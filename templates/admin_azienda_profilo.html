@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% block titolo %}Profilo Azienda — Admin{% endblock %}
+{% block contenuto %}
+<main class="main">
+
+{% set domande = {1:"Office-automation",2:"Software console",3:"App mobile",4:"Reti/IoT",5:"Database/multimedialità",6:"VR/AR",7:"Database SQL/NoSQL",8:"Siti statici",9:"Siti dinamici/API",10:"Documentazione/PM",11:"Hardware PC",12:"Software/antivirus",13:"OS client",14:"OS server",15:"Linux/shell",16:"Help-desk",17:"Reti TCP/IP",18:"Data-entry",19:"Segreteria"} %}
+{% set zone = [("Sviluppo Software",[1,2,3,4,5,6],"#3b82f6"),("Web & Dati",[7,8,9,10],"#8b5cf6"),("Sistemi & Reti",[11,12,13,14,15,16,17,18,19],"#f59e0b")] %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for cat, msg in messages %}<div class="admin-flash admin-flash--{{ cat }}">{{ msg }}</div>{% endfor %}
+{% endwith %}
+
+<div class="profilo-banner banner--ottimo" style="margin-bottom:1.5rem;">
+  <div class="profilo-banner__avatar profilo-avatar--azienda">A</div>
+  <div class="profilo-banner__info">
+    <p class="profilo-banner__nome">{{ az.Azienda }}</p>
+    {% if az.Email %}<p class="profilo-banner__email">{{ az.Email }}</p>{% endif %}
+    {% if az.Descrizione %}<p class="profilo-banner__dettaglio">{{ az.Descrizione[:60] }}{% if az.Descrizione|length > 60 %}…{% endif %}</p>{% endif %}
+  </div>
+  <div class="profilo-banner__azioni">
+    <div class="profilo-banner__badge">ID #{{ az.id }}</div>
+    {% if az.admin_modified %}<div class="profilo-banner__badge" style="background:rgba(200,168,75,.12);color:#9a7d2a;border-color:rgba(200,168,75,.3);">Modificato</div>{% endif %}
+    <a href="{{ url_for('admin_azienda_modifica', id=az.id) }}" class="btn-modifica-profilo">Modifica</a>
+  </div>
+</div>
+
+<div class="profilo-layout">
+  <div class="profilo-col profilo-col--sx">
+    <p class="profilo-sezione-titolo">Dati azienda</p>
+    <div class="profilo-anagrafica">
+      <div class="profilo-anagrafica__riga"><span class="profilo-anagrafica__label">ID</span><span class="profilo-anagrafica__val">#{{ az.id }}</span></div>
+      <div class="profilo-anagrafica__riga"><span class="profilo-anagrafica__label">Azienda</span><span class="profilo-anagrafica__val">{{ az.Azienda }}</span></div>
+      <div class="profilo-anagrafica__riga"><span class="profilo-anagrafica__label">Email</span><span class="profilo-anagrafica__val" style="font-size:.74rem;word-break:break-all;">{{ az.Email or "—" }}</span></div>
+      {% if az.Descrizione %}
+      <div class="profilo-anagrafica__riga" style="align-items:flex-start;"><span class="profilo-anagrafica__label">Descr.</span><span class="profilo-anagrafica__val" style="font-size:.75rem;line-height:1.45;text-align:right;">{{ az.Descrizione }}</span></div>
+      {% endif %}
+    </div>
+
+    <p class="profilo-sezione-titolo" style="margin-top:1.5rem;">Analisi per area</p>
+    {% for nome_zona, indici, colore in zone %}
+    {% set ns = namespace(pl=0,ml=0,pp=0,mp=0) %}
+    {% for i in indici %}
+      {% set p_obj = pesi|selectattr("domanda","equalto",i)|first if pesi is defined else none %}
+      {% set m = p_obj.peso if p_obj else 1.0 %}
+      {% if az["Prevista_"~i] %}
+        {% if az["Livello_"~i] is not none %}{% set ns.pl = ns.pl + (az["Livello_"~i] * m) %}{% endif %}
+        {% set ns.ml = ns.ml + (m * 5) %}
+        {% set ns.pp = ns.pp + m %}
+      {% endif %}
+      {% set ns.mp = ns.mp + m %}
+    {% endfor %}
+    {% set pct_p = ((ns.pp/ns.mp)*100)|round|int if ns.mp else 0 %}
+    {% set pct_l = ((ns.pl/ns.ml)*100)|round|int if ns.ml else 0 %}
+    <div class="scorecard" style="--sc-color:{{ colore }};">
+      <div class="scorecard__header">
+        <div class="scorecard__dot"></div>
+        <span class="scorecard__nome">{{ nome_zona }}</span>
+        <span class="scorecard__pct-big">{{ pct_p }}%</span>
+      </div>
+      <div class="scorecard__bars">
+        <div class="scorecard__bar-row">
+          <span class="scorecard__bar-label">Attività prev.</span>
+          <div class="scorecard__track"><div class="scorecard__fill" style="width:{{pct_p}}%;background:{{colore}};"></div></div>
+          <span class="scorecard__pct">{{pct_p}}%</span>
+        </div>
+        <div class="scorecard__bar-row">
+          <span class="scorecard__bar-label">Livello rich.</span>
+          <div class="scorecard__track"><div class="scorecard__fill" style="width:{{pct_l}}%;background:{{colore}};opacity:.65;"></div></div>
+          <span class="scorecard__pct">{{pct_l}}%</span>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="profilo-col profilo-col--dx">
+    <p class="profilo-sezione-titolo">Questionario attività</p>
+    {% for nome_zona, indici, colore in zone %}
+    <div class="zona-domande" style="--zona-colore:{{ colore }};">
+      <div class="zona-domande__header">
+        <div class="zona-domande__dot"></div>
+        <span class="zona-domande__titolo">{{ nome_zona }}</span>
+        <span class="zona-domande__count">{{ indici|length }} attività</span>
+      </div>
+      {% for i in indici %}
+      <div class="profilo-domanda {% if not az["Prevista_"~i] %}profilo-domanda--inattiva{% endif %}">
+        <div class="profilo-domanda__num">{{ i }}</div>
+        <div class="profilo-domanda__testo">{{ domande[i] }}</div>
+        <div></div>
+        <div class="profilo-domanda__vals">
+          {% if az["Prevista_"~i] %}
+          <div class="profilo-val"><span class="profilo-val__label">Liv.</span><span class="dot-v dot-v--{{ az["Livello_"~i] or 0 }}">{{ az["Livello_"~i] or "—" }}</span></div>
+          <div class="profilo-val"><span class="profilo-val__label">Form.</span><span class="az-form-badge az-form-badge--{{ az["Formazione_"~i] or 'NP' }}">{{ az["Formazione_"~i] or "—" }}</span></div>
+          {% else %}
+          <span class="profilo-domanda__np">Non prevista</span>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div style="margin-top:1.5rem;display:flex;gap:.75rem;flex-wrap:wrap;">
+  <a href="{{ url_for('admin_panel') }}" class="admin-back">← Torna all'admin</a>
+  <a href="{{ url_for('admin_azienda_modifica', id=az.id) }}" class="admin-btn-salva" style="font-size:.8rem;">Modifica</a>
+</div>
+
+</main>
+{% endblock %}

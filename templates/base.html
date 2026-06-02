@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" data-tema="chiaro">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,36 +9,39 @@
 <body>
 
 <nav class="navbar">
-  <div class="navbar__logo">
-    Stage Match
-    <span>ITIS P. Paleocapa</span>
-  </div>
+  <div class="navbar__logo">Stage Match<span>ITIS P. Paleocapa</span></div>
   <div class="navbar__menu">
     <a href="{{ url_for('home') }}" class="navbar__link {% if request.endpoint == 'home' %}attivo{% endif %}">Home</a>
-    <a href="{{ url_for('lista_aziende') }}" class="navbar__link {% if request.endpoint == 'lista_aziende' %}attivo{% endif %}">Lista Aziende</a>
+    <a href="{{ url_for('lista_aziende') }}" class="navbar__link {% if request.endpoint == 'lista_aziende' %}attivo{% endif %}">Aziende</a>
     <a href="#" id="linkProfilo"
-       class="navbar__link {% if request.endpoint == 'profilo' %}attivo{% endif %} {% if not utente or tipo != 'studente' %}disabilitato{% endif %}"
-       {% if utente and tipo == 'studente' %}href="{{ url_for('profilo') }}"{% endif %}>Profilo</a>
-    {% if utente and tipo == 'admin' %}
-    <a href="{{ url_for('admin_panel') }}" class="navbar__link {% if request.endpoint == 'admin_panel' %}attivo{% endif %}">Admin</a>
+       class="navbar__link
+         {% if request.endpoint in ['profilo', 'profilo_azienda_pubblico'] %}attivo{% endif %}
+         {% if not utente or tipo not in ['studente', 'azienda'] %}disabilitato{% endif %}"
+       {% if utente and tipo in ['studente','azienda'] %}href="{{ url_for('profilo') }}"{% endif %}>Profilo</a>
+    {% if utente and tipo in ['studente','azienda'] %}
+    <a href="{{ url_for('match') }}" class="navbar__link navbar__link--match {% if request.endpoint == 'match' %}attivo{% endif %}">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:.3rem;vertical-align:middle;"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      Match
+    </a>
     {% endif %}
-    <a href="{{ url_for('mappa') }}" class="navbar__link {% if request.endpoint == 'mappa' %}attivo{% endif %}">Mappa</a>
+    {% if utente and tipo == 'admin' %}
+    <a href="{{ url_for('admin_panel') }}" class="navbar__link {% if request.endpoint in ['admin_panel','admin_profilo','admin_modifica','admin_azienda_profilo','admin_azienda_modifica'] %}attivo{% endif %}">Admin</a>
+    {% endif %}
   </div>
-  <div class="navbar__azioni" id="navbarAzione">
+  <div class="navbar__azioni">
+    <button class="btn-tema" onclick="toggleTema()" id="btnTema" title="Cambia tema"></button>
     {% if utente %}
-      <!-- Click sul profilo mini porta al profilo se studente, altrimenti nulla -->
       {% if tipo == 'studente' %}
+      <a href="{{ url_for('profilo') }}" class="profilo-mini profilo-mini--link">
+      {% elif tipo == 'azienda' %}
       <a href="{{ url_for('profilo') }}" class="profilo-mini profilo-mini--link">
       {% else %}
       <div class="profilo-mini">
       {% endif %}
         <div class="profilo-mini__avatar">{{ (utente.name or utente.email or '?')[0]|upper }}</div>
         <span class="profilo-mini__nome">{{ (utente.name or utente.email or '').split(' ')[0] }}</span>
-      {% if tipo == 'studente' %}
-      </a>
-      {% else %}
-      </div>
-      {% endif %}
+        {% if tipo == 'azienda' %}<span class="profilo-mini__tipo-badge">Azienda</span>{% endif %}
+      {% if tipo in ['studente', 'azienda'] %}</a>{% else %}</div>{% endif %}
       <a href="{{ url_for('logout') }}"><button class="btn-logout">Esci</button></a>
     {% else %}
       <button class="btn-login" onclick="apriModalLogin()">Login</button>
@@ -56,24 +59,29 @@
       <p class="modal__lato-sub">Accedi per gestire il tuo profilo PCTO</p>
     </div>
     <div class="modal__corpo">
-      <button class="modal__chiudi" onclick="chiudiModalLogin()" aria-label="Chiudi">✕</button>
+      <button class="modal__chiudi" onclick="chiudiModalLogin()">✕</button>
 
-      <!-- Step 1: scelta tipo -->
       <div id="stepScelta">
         <p class="modal__titolo">Accedi al <span>portale</span></p>
         <div class="scelta-login">
           <button class="btn-tipo-login" onclick="mostraSceltaStudente()">
-            <span class="btn-tipo-login__icona">🎓</span>
+            <span class="btn-tipo-login__icona">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+            </span>
             <span class="btn-tipo-login__testo">Studente</span>
             <span class="btn-tipo-login__sub">Account scolastico</span>
           </button>
-          <div class="btn-tipo-login disabilitato-login" title="Accesso aziende non ancora disponibile">
-            <span class="btn-tipo-login__icona">🏢</span>
+          <button class="btn-tipo-login" onclick="mostraSceltaAzienda()">
+            <span class="btn-tipo-login__icona">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+            </span>
             <span class="btn-tipo-login__testo">Azienda</span>
-            <span class="btn-tipo-login__sub">Non disponibile</span>
-          </div>
+            <span class="btn-tipo-login__sub">Account azienda</span>
+          </button>
           <button class="btn-tipo-login btn-tipo-login--admin" onclick="mostraLoginAdmin()">
-            <span class="btn-tipo-login__icona">🔑</span>
+            <span class="btn-tipo-login__icona">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            </span>
             <span class="btn-tipo-login__testo">Admin</span>
             <span class="btn-tipo-login__sub">Accesso riservato</span>
           </button>
@@ -81,30 +89,42 @@
         <p class="modal__nota">Seleziona il tipo di account per continuare.</p>
       </div>
 
-      <!-- Step 2: lista studenti -->
       <div id="stepStudente" style="display:none;">
         <button class="modal__indietro" onclick="tornaScelta()">← Indietro</button>
-        <p class="modal__titolo" style="margin-top:.75rem;">Chi sei?</p>
-        <p class="modal__nota" style="margin-bottom:1rem;text-align:left;font-size:.78rem;">Seleziona il tuo nome dalla lista degli studenti registrati.</p>
-        <div id="listaStudenti" class="lista-studenti-login">
-          <div class="lista-studenti-login__loading">Caricamento…</div>
+        <p class="modal__titolo" style="margin-top:.75rem;">Accedi come <span>Studente</span></p>
+        <p class="modal__nota" style="margin-bottom:1rem;text-align:left;font-size:.78rem;">Inserisci la tua email scolastica per accedere al profilo PCTO.</p>
+        <div class="admin-form">
+          <label class="admin-form__label" for="studenteEmail">Email scolastica</label>
+          <input type="email" id="studenteEmail" class="admin-form__input"
+                 placeholder="nome.cognome@itispaleocapa.it"
+                 onkeydown="if(event.key==='Enter') loginStudenteEmail()">
+          <div id="studenteErrore" class="admin-form__errore" style="display:none;"></div>
+          <button class="admin-form__btn" onclick="loginStudenteEmail()">Accedi</button>
         </div>
-        <p class="modal__nota" style="margin-top:.75rem;">Solo gli studenti che hanno compilato il questionario PCTO sono visibili.</p>
+        <p class="modal__nota" style="margin-top:.75rem;">Solo chi ha compilato il questionario PCTO può accedere.</p>
       </div>
 
-      <!-- Step 3: login admin -->
+      <div id="stepAzienda" style="display:none;">
+        <button class="modal__indietro" onclick="tornaScelta()">← Indietro</button>
+        <p class="modal__titolo" style="margin-top:.75rem;">Accedi come <span>Azienda</span></p>
+        <p class="modal__nota" style="margin-bottom:1rem;text-align:left;font-size:.78rem;">Inserisci l'email con cui hai compilato il questionario PCTO Azienda.</p>
+        <div class="admin-form">
+          <label class="admin-form__label" for="aziendaEmail">Email azienda</label>
+          <input type="email" id="aziendaEmail" class="admin-form__input"
+                 placeholder="Es. info@azienda.it"
+                 onkeydown="if(event.key==='Enter') loginAziendaEmail()">
+          <div id="aziendaErrore" class="admin-form__errore" style="display:none;"></div>
+          <button class="admin-form__btn" onclick="loginAziendaEmail()">Accedi</button>
+        </div>
+        <p class="modal__nota" style="margin-top:.75rem;">Solo le aziende registrate nel database PCTO possono accedere.</p>
+      </div>
+
       <div id="stepAdmin" style="display:none;">
         <button class="modal__indietro" onclick="tornaScelta()">← Indietro</button>
         <p class="modal__titolo" style="margin-top:.75rem;">Accesso <span>Admin</span></p>
         <div class="admin-form">
-          <div class="admin-form__campo">
-            <label class="admin-form__label">Nome utente</label>
-            <input type="text" id="adminNome" class="admin-form__input" placeholder="admin" autocomplete="off">
-          </div>
-          <div class="admin-form__campo">
-            <label class="admin-form__label">Password</label>
-            <input type="password" id="adminPassword" class="admin-form__input" placeholder="••••">
-          </div>
+          <div class="admin-form__campo"><label class="admin-form__label">Nome utente</label><input type="text" id="adminNome" class="admin-form__input" placeholder="admin" autocomplete="off"></div>
+          <div class="admin-form__campo"><label class="admin-form__label">Password</label><input type="password" id="adminPassword" class="admin-form__input" placeholder="••••"></div>
           <p id="adminErrore" class="admin-form__errore" style="display:none;">Credenziali non valide.</p>
           <button class="admin-form__btn" onclick="loginAdmin()">Accedi</button>
         </div>
@@ -118,13 +138,35 @@
 <footer>
   <div class="footer__inner">
     <span>© 2026 ITIS Pietro Paleocapa — Bergamo</span>
-    <span class="footer__sep">|</span>
-    <a href="#">Privacy Policy</a>
-    <span class="footer__sep">|</span>
-    <a href="#">Contatti</a>
+    <span class="footer__sep">|</span><a href="{{ url_for('privacy') }}">Privacy &amp; Sicurezza</a>
+    <span class="footer__sep">|</span><a href="#">Contatti</a>
     <span class="footer__didattico">Sito a scopo didattico</span>
   </div>
 </footer>
+
+<div id="cookieBanner" class="cookie-banner" style="display:none;" role="dialog" aria-label="Informativa cookie">
+  <div class="cookie-banner__inner">
+    <div class="cookie-banner__left">
+      <div class="cookie-banner__icona">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <div>
+        <p class="cookie-banner__titolo">Stage Match usa dati tecnici</p>
+        <p class="cookie-banner__testo">
+          Questo sito utilizza cookie di sessione <strong>strettamente tecnici</strong> per il funzionamento dell'accesso.
+          Nessun dato viene ceduto a terzi né usato per profilazione commerciale.
+          <a href="{{ url_for('privacy') }}" class="cookie-banner__link">Leggi l'informativa completa →</a>
+        </p>
+      </div>
+    </div>
+    <div class="cookie-banner__azioni">
+      <a href="{{ url_for('privacy') }}" class="cookie-banner__btn cookie-banner__btn--ghost">Dettagli</a>
+      <button onclick="accettaCookie()" class="cookie-banner__btn cookie-banner__btn--primary">Ho capito</button>
+    </div>
+  </div>
+</div>
 
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 {% block script %}{% endblock %}
